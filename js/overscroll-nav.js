@@ -41,7 +41,7 @@ function createOverscrollNav(opts) {
   const PULL_VAR  = opts.pullVar || '--pull';
 
   let pull = 0, pullTimer = 0, pullDir = 0;
-  let locked = false, quietTimer = 0;
+  let locked = false;
   let prevDelta = 0, peakDelta = 0, fading = 0, lastWheel = 0;
   // Тянуть экран можно, только если список был у края в НАЧАЛЕ жеста. Решается один
   // раз (armed) и держится до паузы: жест, сам домотавший список до края, экран не тянет.
@@ -74,13 +74,11 @@ function createOverscrollNav(opts) {
   // жест сработал — экран уезжает, отдачу снимаем мгновенно, без пружины
   function drop()    { clearTimeout(pullTimer); pull = 0; setPull(0, false); }
 
-  /* Трекпад досылает инерцию ещё 1–2 секунды после отрыва пальцев. Отработавший
-     жест глушим до затишья, иначе хвост копится уже на новом экране. */
-  function holdUntilQuiet() {
-    locked = true; touchY = null;
-    clearTimeout(quietTimer);
-    quietTimer = setTimeout(() => { locked = false; }, 260);
-  }
+  /* После перехода глушим хвост инерции того же жеста, чтобы он не потянул уже новый
+     экран. Держим до ПЕРВОЙ паузы в потоке (её ловит fresh в onWheel), а не по таймеру:
+     иначе инерция бесконечно продлевала бы блокировку и новый экран «не реагировал».
+     Новый жест (после паузы) разблокирует сразу. */
+  function lockTail() { locked = true; touchY = null; }
 
   function pullBy(px) {
     pull = Math.max(0, pull + Math.min(px, STEP_CAP));
@@ -90,7 +88,7 @@ function createOverscrollNav(opts) {
     if (pull < THRESHOLD) return;
     const dir = pullDir;
     drop();
-    holdUntilQuiet();
+    lockTail();
     onCommit(dir);
   }
 
@@ -115,13 +113,24 @@ function createOverscrollNav(opts) {
     if (!dir || !active()) return;
 
     const now = performance.now();
-    if (now - lastWheel > GESTURE_GAP) {   // пауза = начался новый жест
+    const fresh = now - lastWheel > GESTURE_GAP;   // пауза = начался новый жест
+    lastWheel = now;
+
+    // Идёт анимация перехода — глушим всё до её конца.
+    if (busy()) { e.preventDefault(); return; }
+
+    // Блокировка после перехода: хвост инерции того же жеста (fresh=false) глушим,
+    // но новый жест (пауза была) сразу разблокирует — иначе новый экран не реагирует.
+    if (locked) {
+      if (!fresh) { e.preventDefault(); return; }
+      locked = false;
+    }
+
+    if (fresh) {
       prevDelta = peakDelta = fading = 0;
       armed = canGo(dir) && atEdge(dir);   // решаем по положению списка в НАЧАЛЕ жеста
     }
-    lastWheel = now;
 
-    if (locked || busy()) { e.preventDefault(); holdUntilQuiet(); return; }
     if (!armed) return;          // жест листает список (или некуда идти) — экран не трогаем
 
     e.preventDefault();          // жест забираем целиком, чтобы поверх не шёл overscroll
@@ -131,7 +140,8 @@ function createOverscrollNav(opts) {
     pullBy(Math.abs(e.deltaY));
   };
 
-  const onTouchStart = (e) => { touchY = e.touches[0].clientY; touchPending = true; release(); };
+  // палец на экране — однозначно новый жест: снимаем блокировку хвоста
+  const onTouchStart = (e) => { touchY = e.touches[0].clientY; touchPending = true; locked = false; release(); };
   const onTouchMove = (e) => {
     if (touchY === null || locked || !active()) return;
     const dy = e.touches[0].clientY - touchY;
@@ -158,7 +168,6 @@ function createOverscrollNav(opts) {
     removeEventListener('touchmove', onTouchMove);
     removeEventListener('touchend', onTouchEnd);
     clearTimeout(pullTimer);
-    clearTimeout(quietTimer);
   }
 
   return { drop, release, destroy };
