@@ -62,7 +62,7 @@ button { font: inherit; color: inherit; }
   --my: 40%;
   position: fixed;
   inset: -20%;
-  z-index: 0;
+  z-index: -1;   /* фон-туман — в самый низ, над ним ложится курсорный след */
   background:
     radial-gradient(60% 50% at 22% 28%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
     radial-gradient(52% 46% at 78% 22%, rgba(127,178,232,.20) 0%, rgba(127,178,232,0) 60%),
@@ -73,10 +73,14 @@ button { font: inherit; color: inherit; }
 
 /* Мягкая реакция на курсор — отдельным слоем, чтобы не пересобирать фон на каждое движение.
    Свечение, а не частицы: тише и не тянет фокус. Тач-устройствам не показываем. */
+/* Курсорный дым-след (FluidSmoke) — прозрачный canvas, prepend-ится в body.
+   Над фоном-туманом (z-index -1), под контентом (z-index 1). */
+body > canvas { z-index: 0; }
+
 .glow {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(340px 340px at var(--mx) var(--my),

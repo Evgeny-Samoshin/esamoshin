@@ -427,5 +427,23 @@
     } catch (e) { /* нет WebGL — живём с градиентом */ }
   }
 </script>
+
+<!-- Курсорный дым-след (FluidSmoke). Прозрачный слой только следа: sourceCount 0.
+     mount вернёт null под reduced-motion / без WebGL2 — тогда просто нет следа. -->
+<script src="js/smoke.js"></script>
+<script>
+  if (!location.search.includes('notrail')) {
+    var cursorTrail = FluidSmoke.mount(document.body, {
+      transparent: true,
+      sourceCount: 0,               // без фонового дыма — фон даёт Vanta
+      smokeLight: '#EDF3FB',
+      smokeDark: '#B9D2EE',
+      cursorColor: '#4A8FD4',       // небесно-синий акцент в следе
+      accentMix: 1
+    });
+    // Библиотека prepend-ит canvas как фон (за контентом). Поднимаем над туманом (см. CSS body>canvas).
+  }
+</script>
+</script>
 </body>
 </html>
