@@ -405,7 +405,9 @@
 <script src="js/vendor/vanta.fog.min.js"></script>
 <script>
   // Уважаем reduced-motion и не падаем, если библиотека/WebGL недоступны — остаётся градиент.
-  if (window.VANTA && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // ?nofog — быстрый выключатель для сравнения: мешает ли фон отклику жестов на этой машине.
+  if (window.VANTA && !matchMedia('(prefers-reduced-motion: reduce)').matches
+      && !location.search.includes('nofog')) {
     try {
       VANTA.FOG({
         el: '#smoke',
