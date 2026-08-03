@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAMOSHIN — сайты для бизнеса</title>
+<meta name="description" content="Разработка сайтов для бизнеса: лендинги, визитки, корпоративные сайты, интернет-магазины. Прозрачный процесс: план работ с этапами и ценами до начала работы.">
+<meta name="theme-color" content="#F2F3F5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ponytail: заглушка фона. Реальный fluid-дым навешивается сюда же, слоем ниже сцены. -->
+<div class="smoke" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+
+<main class="stage" id="stage">
+
+  <!-- ═══════════════ СТАРТ ═══════════════ -->
+  <section class="screen screen--start is-active is-first" id="s-start" data-screen="start">
+    <div class="start">
+      <h1 class="logo">SAMOSHIN</h1>
+      <p class="logo-sub">Сайты для бизнеса</p>
+      <div class="start-actions">
+        <button class="btn btn--primary" data-go="brief" data-entry="start-button">Узнать стоимость сайта</button>
+        <button class="btn" data-go="branch-intro">Познакомиться с процессом</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ВЕТКА 1: ОБЕЩАНИЕ ═══════════════ -->
+  <section class="screen" id="s-branch-intro" data-screen="branch-intro" hidden>
+    <div class="pane pane--center">
+      <button class="back" data-back>← Назад</button>
+      <p class="eyebrow">Как я работаю</p>
+      <h2 class="display">Ты <em>видишь</em> каждый шаг<br>и платишь только за то,<br>что уже сделано</h2>
+      <p class="lede">До начала работы ты получаешь план: из каких этапов состоит проект, что выходит на каждом,
+        сколько это стоит и когда будет готово. Дальше — этап за этапом. Ничего не начинается,
+        пока ты не увидел и не принял предыдущее.</p>
+      <p class="lede">Шесть фаз. Дальше — что происходит внутри каждой.</p>
+      <button class="btn btn--primary" data-go="phases">Смотреть процесс</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ВЕТКА 2: ШЕСТЬ ФАЗ ═══════════════ -->
+  <section class="screen" id="s-phases" data-screen="phases" hidden>
+    <div class="pane pane--phases">
+      <header class="phases-head">
+        <button class="back" data-back>← Назад</button>
+        <p class="eyebrow">Процесс</p>
+        <h2 class="display display--sm">Шесть фаз</h2>
+      </header>
+
+      <div class="track" id="track" tabindex="0" aria-label="Фазы процесса, листается вниз">
+        <article class="phase" data-i="1">
+          <p class="phase-n">Фаза 1</p>
+          <h3 class="phase-t">Бриф <em>и план</em></h3>
+          <p class="phase-b">Заполняешь бриф, я составляю план с этапами и ценами, созваниваемся и правим, пока всё не сойдётся.</p>
+          <p class="phase-get"><span>Получаешь:</span> план, где видно за что и когда платишь.</p>
+        </article>
+        <article class="phase" data-i="2">
+          <p class="phase-n">Фаза 2</p>
+          <h3 class="phase-t">Анализ <em>проекта</em></h3>
+          <p class="phase-b">Смотрю конкурентов, разбираю твоих клиентов, собираю структуру будущего сайта.</p>
+          <p class="phase-get"><span>Получаешь:</span> карту сайта и путь клиента.</p>
+        </article>
+        <article class="phase" data-i="3">
+          <p class="phase-n">Фаза 3</p>
+          <h3 class="phase-t"><em>Дизайн</em></h3>
+          <p class="phase-b">Подбираем референсы, согласуем концепцию, готовим тексты и изображения, собираю прототип и отрисовываю макет.</p>
+          <p class="phase-get"><span>Получаешь:</span> макет, включая мобильную и десктопную версию.</p>
+        </article>
+        <article class="phase" data-i="4">
+          <p class="phase-n">Фаза 4</p>
+          <h3 class="phase-t"><em>Разработка</em></h3>
+          <p class="phase-b">Вёрстка, код, адаптив под телефоны и планшеты, проверка во всех браузерах.</p>
+          <p class="phase-get"><span>Получаешь:</span> живой сайт на тестовой ссылке.</p>
+        </article>
+        <article class="phase" data-i="5">
+          <p class="phase-n">Фаза 5</p>
+          <h3 class="phase-t"><em>Запуск</em></h3>
+          <p class="phase-b">Деплой на хостинг, подключение домена, при необходимости — админка, чтобы ты сам менял тексты и фото.</p>
+          <p class="phase-get"><span>Получаешь:</span> работающий сайт на твоём домене.</p>
+        </article>
+        <article class="phase" data-i="6">
+          <p class="phase-n">Фаза 6 <span class="phase-opt">по желанию</span></p>
+          <h3 class="phase-t"><em>Поддержка</em></h3>
+          <p class="phase-b">Чиню технические баги, правлю контент, слежу, что всё живо.</p>
+          <p class="phase-get"><span>Получаешь:</span> уверенность, что сайт под присмотром.</p>
+        </article>
+        <article class="phase phase--end" data-i="7">
+          <h3 class="phase-t">Это <em>весь</em> процесс</h3>
+          <p class="phase-b">Теперь — какие сайты бывают и какой нужен тебе.</p>
+          <button class="btn btn--primary" data-go="site-types">Типы сайтов</button>
+        </article>
+      </div>
+
+      <!-- ПК-подсказка: показывает жест буквально — колёсико крутится -->
+      <div class="scroll-hint" id="hint-scroll" aria-hidden="true">
+        <svg viewBox="0 0 26 40" width="26" height="40" fill="none" stroke="currentColor" stroke-width="1.2">
+          <rect x=".6" y=".6" width="24.8" height="38.8" rx="12.4"/>
+          <circle class="scroll-hint-wheel" cx="13" cy="11" r="1.9" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ВЕТКА 3: ТИПЫ САЙТОВ ═══════════════ -->
+  <section class="screen" id="s-site-types" data-screen="site-types" hidden>
+    <div class="pane pane--types">
+      <header class="types-head">
+        <button class="back" data-back>← Назад</button>
+        <p class="eyebrow">Что бывает</p>
+        <h2 class="display display--sm">Типы <em>сайтов</em></h2>
+      </header>
+      <!-- один клик = действие: кликается вся карточка, кнопка внутри заголовка растянута на неё -->
+      <div class="types">
+        <article class="type" data-type="landing">
+          <h3 class="type-t"><button class="type-hit" data-portfolio="landing" aria-label="Лендинг — посмотреть примеры">Лендинг</button></h3>
+          <p class="type-b">Подходит, когда нужно продать что-то одно: услугу, продукт, курс или акцию. Вся страница ведёт к одному — конверсии посетителя в звонок или заявку.</p>
+          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
+        </article>
+        <article class="type" data-type="card">
+          <h3 class="type-t"><button class="type-hit" data-portfolio="card" aria-label="Сайт-визитка — посмотреть примеры">Сайт-визитка</button></h3>
+          <p class="type-b">Подходит, когда за делом стоишь ты или небольшая команда. Рассказать, кто ты и что предлагаешь, показать работы и дать контакты. Обычно 4–8 страниц.</p>
+          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
+        </article>
+        <article class="type" data-type="corp">
+          <h3 class="type-t"><button class="type-hit" data-portfolio="corp" aria-label="Корпоративный сайт — посмотреть примеры">Корпоративный сайт</button></h3>
+          <p class="type-b">Подходит, когда сайту нужно подробно отразить компанию: направления, команда, вакансии, документы, новости. Более 10 страниц.</p>
+          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
+        </article>
+        <article class="type" data-type="shop">
+          <h3 class="type-t"><button class="type-hit" data-portfolio="shop" aria-label="Интернет-магазин — посмотреть примеры">Интернет-магазин</button></h3>
+          <p class="type-b">Подходит, когда нужно продавать много и онлайн: каталог, корзина, оплата — покупка идёт без твоего участия.</p>
+          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
+        </article>
+      </div>
+      <div class="types-cta">
+        <button class="btn btn--primary" data-go="brief" data-entry="walked">Узнать стоимость своего сайта</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ БРИФ ═══════════════ -->
+  <section class="screen screen--brief" id="s-brief" data-screen="brief" hidden>
+    <div class="brief-scroll" id="brief-scroll">
+      <div class="brief">
+        <header class="brief-head">
+          <button class="back" data-back>← Назад</button>
+          <h2 class="display display--sm">Бриф</h2>
+          <p class="lede">Ответь на несколько вопросов о проекте — это займёт пару минут.
+            В ответ пришлю план работ с этапами и ценами. Это бесплатно и ни к чему не обязывает.</p>
+        </header>
+
+        <form class="form" id="brief-form" novalidate>
+
+          <fieldset class="step" data-step="1">
+            <legend><span class="step-n">01</span> О твоём деле</legend>
+            <label class="field">
+              <span class="q">Чем занимается твой бизнес?</span>
+              <textarea name="business" rows="2" required placeholder="Например: юрист по банкротству, доставка цветов, студия мебели на заказ"></textarea>
+            </label>
+            <label class="field">
+              <span class="q">Кто твои клиенты?</span>
+              <textarea name="clients" rows="2" required placeholder="Например: частные лица, компании, и те и другие"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="step" data-step="2" data-required="one">
+            <legend><span class="step-n">02</span> Что должен делать сайт?</legend>
+            <p class="q-note">Выбери один вариант</p>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="goal" value="Продать конкретную услугу или продукт"><span>Продать конкретную услугу или продукт</span></label>
+              <label class="opt"><input type="radio" name="goal" value="Рассказать о компании и услугах"><span>Рассказать о компании и услугах</span></label>
+              <label class="opt"><input type="radio" name="goal" value="Показать всё, что мы делаем: услуги, команда, проекты"><span>Показать всё, что мы делаем: услуги, команда, проекты</span></label>
+              <label class="opt"><input type="radio" name="goal" value="Продавать товары через интернет"><span>Продавать товары через интернет</span></label>
+              <label class="opt opt--own"><input type="radio" name="goal" value="__own"><span>Свой вариант</span></label>
+            </div>
+            <input class="own-input" type="text" name="goal_own" placeholder="Свой вариант" hidden>
+          </fieldset>
+
+          <fieldset class="step" data-step="3" data-required="many">
+            <legend><span class="step-n">03</span> Что должно быть на сайте?</legend>
+            <p class="q-note">Можно несколько</p>
+            <div class="opts opts--grid">
+              <label class="opt"><input type="checkbox" name="blocks" value="Услуги или товары"><span>Услуги или товары</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="Цены, прайс"><span>Цены, прайс</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="Отзывы"><span>Отзывы</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="Фото работ, портфолио"><span>Фото работ, портфолио</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="Форма заявки"><span>Форма заявки</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="О компании, команда"><span>О компании, команда</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="FAQ"><span>FAQ</span></label>
+              <label class="opt"><input type="checkbox" name="blocks" value="Блог, новости"><span>Блог, новости</span></label>
+              <label class="opt opt--own"><input type="checkbox" name="blocks" value="__own"><span>Свой вариант</span></label>
+            </div>
+            <input class="own-input" type="text" name="blocks_own" placeholder="Свой вариант" hidden>
+          </fieldset>
+
+          <fieldset class="step" data-step="4" data-required="one">
+            <legend><span class="step-n">04</span> Как сайт должен выглядеть?</legend>
+            <p class="q-note">Выбери один вариант</p>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="style" value="Строго и минималистично"><span>Строго и минималистично</span></label>
+              <label class="opt"><input type="radio" name="style" value="Ярко и смело"><span>Ярко и смело</span></label>
+              <label class="opt"><input type="radio" name="style" value="Дорого и престижно"><span>Дорого и престижно</span></label>
+              <label class="opt"><input type="radio" name="style" value="Современно и технологично"><span>Современно и технологично</span></label>
+              <label class="opt"><input type="radio" name="style" value="Пока не знаю — доверюсь тебе"><span>Пока не знаю — доверюсь тебе</span></label>
+              <label class="opt opt--own"><input type="radio" name="style" value="__own"><span>Свой вариант</span></label>
+            </div>
+            <input class="own-input" type="text" name="style_own" placeholder="Свой вариант" hidden>
+          </fieldset>
+
+          <fieldset class="step" data-step="5" data-required="many">
+            <legend><span class="step-n">05</span> Что уже есть из материалов?</legend>
+            <p class="q-note">Можно несколько</p>
+            <div class="opts opts--grid">
+              <label class="opt"><input type="checkbox" name="assets" value="Логотип"><span>Логотип</span></label>
+              <label class="opt"><input type="checkbox" name="assets" value="Тексты"><span>Тексты</span></label>
+              <label class="opt"><input type="checkbox" name="assets" value="Фотографии"><span>Фотографии</span></label>
+              <label class="opt"><input type="checkbox" name="assets" value="Фирменные цвета, брендбук"><span>Фирменные цвета, брендбук</span></label>
+              <label class="opt"><input type="checkbox" name="assets" value="Пока ничего нет"><span>Пока ничего нет</span></label>
+              <label class="opt opt--own"><input type="checkbox" name="assets" value="__own"><span>Свой вариант</span></label>
+            </div>
+            <input class="own-input" type="text" name="assets_own" placeholder="Свой вариант" hidden>
+          </fieldset>
+
+          <fieldset class="step" data-step="6" data-required="one:cms one:domain">
+            <legend><span class="step-n">06</span> Технические детали</legend>
+            <p class="q" id="q-cms">Хочешь сам менять тексты и фото после запуска?</p>
+            <div class="opts" role="radiogroup" aria-labelledby="q-cms">
+              <label class="opt"><input type="radio" name="cms" value="Да, хочу сам"><span>Да, хочу сам</span></label>
+              <label class="opt"><input type="radio" name="cms" value="Нет, лучше ты"><span>Нет, лучше ты</span></label>
+              <label class="opt"><input type="radio" name="cms" value="Не знаю, что это значит"><span>Не знаю, что это значит</span></label>
+            </div>
+            <p class="q q--gap" id="q-domain">Есть ли уже адрес сайта (домен)?</p>
+            <div class="opts" role="radiogroup" aria-labelledby="q-domain">
+              <label class="opt"><input type="radio" name="domain" value="Да, есть"><span>Да, есть</span></label>
+              <label class="opt"><input type="radio" name="domain" value="Нет, нужно купить"><span>Нет, нужно купить</span></label>
+              <label class="opt"><input type="radio" name="domain" value="Не знаю, что это"><span>Не знаю, что это</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="step" data-step="7" data-required="one:contact_way">
+            <legend><span class="step-n">07</span> Куда прислать план?</legend>
+            <label class="field">
+              <span class="q">Имя</span>
+              <input type="text" name="name" required autocomplete="name" placeholder="Как к тебе обращаться">
+            </label>
+            <label class="field">
+              <span class="q">Телефон или мессенджер</span>
+              <input type="text" name="phone" required autocomplete="tel" inputmode="tel" placeholder="+7 900 000-00-00 или @nickname">
+            </label>
+            <label class="field">
+              <span class="q">Email <span class="opt-mark">— по желанию</span></span>
+              <input type="email" name="email" autocomplete="email" placeholder="you@example.com">
+            </label>
+            <p class="q q--gap" id="q-way">Как удобнее связаться?</p>
+            <div class="opts" role="radiogroup" aria-labelledby="q-way">
+              <label class="opt"><input type="radio" name="contact_way" value="Telegram"><span>Telegram</span></label>
+              <label class="opt"><input type="radio" name="contact_way" value="WhatsApp"><span>WhatsApp</span></label>
+              <label class="opt"><input type="radio" name="contact_way" value="Звонок"><span>Звонок</span></label>
+              <label class="opt"><input type="radio" name="contact_way" value="Email"><span>Email</span></label>
+            </div>
+          </fieldset>
+
+          <div class="form-foot">
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+            <button class="btn btn--primary btn--wide" type="submit">Отправить бриф</button>
+            <p class="form-note">Нажимая, ты соглашаешься на обработку контактов для ответа по этой заявке. Ничего больше с ними не происходит.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ПОДТВЕРЖДЕНИЕ ═══════════════ -->
+  <section class="screen" id="s-brief-done" data-screen="brief-done" hidden>
+    <div class="pane pane--center">
+      <h2 class="display">Бриф <em>получен</em></h2>
+      <p class="lede">Изучу и вернусь с планом работ в течение суток.</p>
+      <div class="done-actions">
+        <button class="btn" id="done-download">Скачать копию брифа</button>
+        <button class="btn btn--ghost" data-go="start">На главную</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════ ЗАСЕЧКА «ГДЕ Я» ═══════════════ -->
+<!-- Четыре штриха: три экрана ветки + цель. Декоративная, не кликается — навигация в углах. -->
+<div class="trail" id="trail" hidden aria-hidden="true">
+  <span class="trail-tick" data-for="branch-intro"></span>
+  <span class="trail-tick" data-for="phases"></span>
+  <span class="trail-tick" data-for="site-types"></span>
+  <span class="trail-tick trail-tick--goal" data-for="brief"></span>
+</div>
+
+<!-- ═══════════════ УГЛЫ (только внутри ветки) ═══════════════ -->
+<nav class="corners" id="corners" hidden aria-label="Быстрые переходы">
+  <button class="corner corner--tl" data-portfolio="all">Портфолио</button>
+  <button class="corner corner--tr" id="faq-open" aria-label="Частые вопросы">
+    <span aria-hidden="true">?</span>
+  </button>
+  <a class="corner corner--bl" id="call-link" href="tel:+79000000000">
+    <svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M17.5 14.1v2.3a1.5 1.5 0 0 1-1.7 1.5 15 15 0 0 1-6.5-2.3 14.6 14.6 0 0 1-4.5-4.5A15 15 0 0 1 2.5 4.5 1.5 1.5 0 0 1 4 2.8h2.3a1.5 1.5 0 0 1 1.5 1.3c.1.7.3 1.4.5 2.1a1.5 1.5 0 0 1-.3 1.6l-1 1a12 12 0 0 0 4.5 4.5l1-1a1.5 1.5 0 0 1 1.6-.3c.7.3 1.4.4 2.1.5a1.5 1.5 0 0 1 1.3 1.6Z"/>
+    </svg>
+    <span class="sr-only">Позвонить</span>
+  </a>
+  <button class="corner corner--br" data-go="brief" data-entry="corner-icon">Узнать стоимость</button>
+</nav>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<dialog class="overlay overlay--faq" id="ov-faq" aria-labelledby="faq-title">
+  <div class="overlay-inner">
+    <button class="overlay-close" data-close-overlay aria-label="Закрыть">×</button>
+    <h2 class="display display--sm" id="faq-title">Частые <em>вопросы</em></h2>
+    <div class="faq">
+      <details class="qa">
+        <summary>Сколько стоит сайт?</summary>
+        <p>Зависит от объёма: количества страниц, сложности дизайна, нужна ли админка и магазин. Поэтому я не называю цену до брифа — иначе это гадание. Заполнишь бриф — пришлю план, где цена разбита по этапам, и видно, за что именно ты платишь. Это бесплатно.</p>
+      </details>
+      <details class="qa">
+        <summary>Сколько времени это займёт?</summary>
+        <p>Лендинг — обычно 1–2 недели, визитка — 2–3, корпоративный сайт — от месяца. Срок сильно зависит от того, как быстро приходят материалы и правки с твоей стороны. Точные даты по этапам будут в плане.</p>
+      </details>
+      <details class="qa">
+        <summary>Что мне нужно подготовить?</summary>
+        <p>В идеале — логотип, тексты, фотографии и понимание, кто твой клиент. Если ничего этого нет, не страшно: тексты пишу сам, изображения подбираю, логотип можно оставить на потом. В брифе есть отдельный вопрос про материалы — отметь, что есть, остальное возьму на себя.</p>
+      </details>
+      <details class="qa">
+        <summary>Обязательно ли делать всё сразу?</summary>
+        <p>Нет. Процесс разбит на этапы именно поэтому: можно запустить сайт в базовом виде и добавлять разделы потом. Оплата тоже по этапам — ты не отдаёшь всю сумму вперёд.</p>
+      </details>
+      <details class="qa">
+        <summary>Смогу ли я сам менять тексты и фото?</summary>
+        <p>Да, если скажешь об этом заранее — тогда подключаю админку и показываю, как ей пользоваться. Без админки сайт дешевле, но за правками придётся приходить ко мне. В брифе есть этот вопрос.</p>
+      </details>
+      <details class="qa">
+        <summary>Кто делает сайт?</summary>
+        <p>Я. Не агентство и не конвейер: один человек ведёт проект от брифа до запуска, и на связи всё время один и тот же человек. Поэтому проектов в работе немного, а этапы видно насквозь.</p>
+      </details>
+      <details class="qa">
+        <summary>А если мне не понравится?</summary>
+        <p>Для этого этапы и нужны. Дизайн согласуется до вёрстки: сначала концепция, потом макет. Правки внутри этапа — часть работы. Дальше не идём, пока текущий этап не принят — так «не понравилось» вскрывается на макете, а не на готовом сайте.</p>
+      </details>
+    </div>
+  </div>
+</dialog>
+
+<!-- ═══════════════ ПОРТФОЛИО ═══════════════ -->
+<dialog class="overlay overlay--work" id="ov-portfolio" aria-labelledby="pf-title">
+  <div class="overlay-inner">
+    <button class="overlay-close" data-close-overlay aria-label="Закрыть">×</button>
+    <h2 class="display display--sm" id="pf-title">Работы</h2>
+    <div class="filters" id="pf-filters" role="group" aria-label="Фильтр по типу сайта">
+      <button class="filter is-on" data-filter="all">Все</button>
+      <button class="filter" data-filter="landing">Лендинги</button>
+      <button class="filter" data-filter="card">Визитки</button>
+      <button class="filter" data-filter="corp">Корпоративные</button>
+      <button class="filter" data-filter="shop">Магазины</button>
+    </div>
+    <div class="works" id="pf-works">
+      <!-- ponytail: превью — CSS-плашки. Появятся скриншоты — меняешь div.work-img на <img alt="…">. -->
+      <article class="work" data-type="landing">
+        <div class="work-img work-img--1" role="img" aria-label="Превью лендинга арбитражного управляющего"></div>
+        <h3 class="work-t">Лендинг арбитражного управляющего</h3>
+        <p class="work-b">Банкротство физических лиц. Одна страница, одна задача — заявка на консультацию.</p>
+        <p class="work-type">Лендинг</p>
+      </article>
+      <article class="work" data-type="card">
+        <div class="work-img work-img--2" role="img" aria-label="Превью сайта швейного цеха"></div>
+        <h3 class="work-t">Швейный цех: шторы и текстиль</h3>
+        <p class="work-b">Производство под заказ. Каталог работ, расчёт и контакты.</p>
+        <p class="work-type">Сайт-визитка</p>
+      </article>
+      <article class="work" data-type="card">
+        <div class="work-img work-img--3" role="img" aria-label="Превью сайта студии изделий из керамогранита"></div>
+        <h3 class="work-t">Студия изделий из керамогранита</h3>
+        <p class="work-b">Кухни, декор, мебель. Показать материал и работы так, чтобы было видно качество.</p>
+        <p class="work-type">Сайт-визитка</p>
+      </article>
+      <article class="work" data-type="corp">
+        <div class="work-img work-img--4" role="img" aria-label="Превью корпоративного сайта завода нефтегазового оборудования"></div>
+        <h3 class="work-t">Завод нефтегазового оборудования</h3>
+        <p class="work-b">Направления, производство, документы, вакансии. Многостраничная структура под каталог продукции.</p>
+        <p class="work-type">Корпоративный сайт</p>
+      </article>
+    </div>
+    <p class="works-empty" id="pf-empty" hidden>В этом типе работ пока нет. Ближайшая — в соседнем фильтре.</p>
+  </div>
+</dialog>
+
+<script src="js/overscroll-nav.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
