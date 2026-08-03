@@ -41,12 +41,11 @@ function createOverscrollNav(opts) {
   const PULL_VAR  = opts.pullVar || '--pull';
 
   let pull = 0, pullTimer = 0, pullDir = 0;
-  let locked = false;
-  let prevDelta = 0, peakDelta = 0, fading = 0, lastWheel = 0;
-  // Тянуть экран можно, только если список был у края в НАЧАЛЕ жеста. Решается один
-  // раз (armed) и держится до паузы: жест, сам домотавший список до края, экран не тянет.
+  let prevDelta = 0, peakDelta = 0, fading = 0, lastWheel = 0, wasCoasting = false;
+  // Тянуть экран можно, только если список у края в НАЧАЛЕ жеста. Решается один раз
+  // (armed) в начале жеста: жест, сам домотавший список до края, экран не тянет.
   let armed = false;
-  let touchY = null, touchPending = false;
+  let touchY = null, touchPending = false, touchLive = false;
 
   /* Сопротивление как на iOS: чем дальше тянешь, тем меньше идёт.
      Линейный сдвиг с упором в потолок читался как рывок. */
@@ -74,22 +73,17 @@ function createOverscrollNav(opts) {
   // жест сработал — экран уезжает, отдачу снимаем мгновенно, без пружины
   function drop()    { clearTimeout(pullTimer); pull = 0; setPull(0, false); }
 
-  /* После перехода глушим хвост инерции того же жеста, чтобы он не потянул уже новый
-     экран. Держим до ПЕРВОЙ паузы в потоке (её ловит fresh в onWheel), а не по таймеру:
-     иначе инерция бесконечно продлевала бы блокировку и новый экран «не реагировал».
-     Новый жест (после паузы) разблокирует сразу. */
-  function lockTail() { locked = true; touchY = null; }
-
+  // Возвращает true, если жест дотянул до перехода (для тача — прекратить текущее касание).
   function pullBy(px) {
     pull = Math.max(0, pull + Math.min(px, STEP_CAP));
     setPull(rubber(pull) * -pullDir, false);   // тянешь вниз — контент идёт вверх
     clearTimeout(pullTimer);
     pullTimer = setTimeout(release, RELEASE_MS);
-    if (pull < THRESHOLD) return;
+    if (pull < THRESHOLD) return false;
     const dir = pullDir;
     drop();
-    lockTail();
     onCommit(dir);
+    return true;
   }
 
   function aim(dir) { if (dir !== pullDir) { drop(); pullDir = dir; } }  // развернулся — без пружины
@@ -113,37 +107,36 @@ function createOverscrollNav(opts) {
     if (!dir || !active()) return;
 
     const now = performance.now();
+    const mag = Math.abs(e.deltaY);
     const fresh = now - lastWheel > GESTURE_GAP;   // пауза = начался новый жест
     lastWheel = now;
+    if (fresh) { prevDelta = peakDelta = fading = 0; }
 
-    // Идёт анимация перехода — глушим всё до её конца.
-    if (busy()) { e.preventDefault(); return; }
+    // Детектор кормим ВСЕГДА (в т.ч. пока идёт анимация перехода), чтобы к концу
+    // анимации инерция уже опознавалась как затухающая и не тянула новый экран.
+    const coasting = isCoasting(mag);
+    // Новый жест начинается с паузы ИЛИ когда после затухания палец толкнул снова
+    // (нарастание сбросило coasting). Тогда — и только тогда — переоцениваем край.
+    const starting = fresh || (wasCoasting && !coasting);
+    wasCoasting = coasting;
 
-    // Блокировка после перехода: хвост инерции того же жеста (fresh=false) глушим,
-    // но новый жест (пауза была) сразу разблокирует — иначе новый экран не реагирует.
-    if (locked) {
-      if (!fresh) { e.preventDefault(); return; }
-      locked = false;
-    }
+    if (busy()) { e.preventDefault(); return; }   // идёт анимация перехода
 
-    if (fresh) {
-      prevDelta = peakDelta = fading = 0;
-      armed = canGo(dir) && atEdge(dir);   // решаем по положению списка в НАЧАЛЕ жеста
-    }
+    if (starting) armed = canGo(dir) && atEdge(dir);  // край ТЕКУЩЕГО экрана
 
-    if (!armed) return;          // жест листает список (или некуда идти) — экран не трогаем
+    if (!armed) return;   // список листается сам — его и его инерцию не трогаем (нативный скролл)
 
-    e.preventDefault();          // жест забираем целиком, чтобы поверх не шёл overscroll
-    // Внутри armed-жеста инерция не должна докидывать до перехода — гасим её хвост.
-    if (isCoasting(Math.abs(e.deltaY))) { release(); return; }
+    e.preventDefault();   // armed-жест забираем целиком, чтобы поверх не шёл overscroll
+    // Инерция armed-жеста: гасим — не переход и не унос на новый экран. Но НЕ блокируем:
+    // нарастающий новый жест выше уже сбросил coasting и переармил armed, и пройдёт сюда.
+    if (coasting) { release(); return; }
     aim(dir);
-    pullBy(Math.abs(e.deltaY));
+    pullBy(mag);
   };
 
-  // палец на экране — однозначно новый жест: снимаем блокировку хвоста
-  const onTouchStart = (e) => { touchY = e.touches[0].clientY; touchPending = true; locked = false; release(); };
+  const onTouchStart = (e) => { touchY = e.touches[0].clientY; touchPending = true; touchLive = true; release(); };
   const onTouchMove = (e) => {
-    if (touchY === null || locked || !active()) return;
+    if (!touchLive || touchY === null || !active()) return;
     const dy = e.touches[0].clientY - touchY;
     const dir = dy > 0 ? -1 : 1;                        // палец вниз — уходим назад
     if (touchPending) {
@@ -153,9 +146,9 @@ function createOverscrollNav(opts) {
     }
     if (!armed) return;                                 // касание листает список — экран не трогаем
     aim(dir);
-    pullBy(Math.abs(dy) - pull);
+    if (pullBy(Math.abs(dy) - pull)) touchLive = false; // дошло до перехода — остаток касания игнорируем
   };
-  const onTouchEnd = () => { touchY = null; touchPending = false; release(); };
+  const onTouchEnd = () => { touchY = null; touchPending = false; touchLive = false; release(); };
 
   addEventListener('wheel', onWheel, { passive: false });
   addEventListener('touchstart', onTouchStart, { passive: true });
