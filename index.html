@@ -13,8 +13,8 @@
 </head>
 <body>
 
-<!-- ponytail: заглушка фона. Реальный fluid-дым навешивается сюда же, слоем ниже сцены. -->
-<div class="smoke" aria-hidden="true"></div>
+<!-- Фон-дым (Vanta.FOG). Статический градиент в CSS — запасной фон, если WebGL/скрипт не поднялся. -->
+<div class="smoke" id="smoke" aria-hidden="true"></div>
 <div class="glow" id="glow" aria-hidden="true"></div>
 <div class="veil" aria-hidden="true"></div>
 
@@ -399,5 +399,31 @@
 
 <script src="js/overscroll-nav.js"></script>
 <script src="js/app.js"></script>
+
+<!-- Фон-дым. Тяжёлые библиотеки грузятся последними, поверх статического градиента-заглушки. -->
+<script src="js/vendor/three.r134.min.js"></script>
+<script src="js/vendor/vanta.fog.min.js"></script>
+<script>
+  // Уважаем reduced-motion и не падаем, если библиотека/WebGL недоступны — остаётся градиент.
+  if (window.VANTA && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    try {
+      VANTA.FOG({
+        el: '#smoke',
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        highlightColor: 0x9d9c99,
+        midtoneColor: 0xcacaca,
+        lowlightColor: 0x5f5b70,
+        baseColor: 0xffffff,
+        blurFactor: 0.53,
+        speed: 0.50,
+        zoom: 0.20
+      });
+    } catch (e) { /* нет WebGL — живём с градиентом */ }
+  }
+</script>
 </body>
 </html>

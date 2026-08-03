@@ -68,9 +68,8 @@ button { font: inherit; color: inherit; }
     radial-gradient(52% 46% at 78% 22%, rgba(127,178,232,.20) 0%, rgba(127,178,232,0) 60%),
     radial-gradient(70% 60% at 62% 88%, rgba(200,203,208,.34) 0%, rgba(200,203,208,0) 64%),
     var(--bg);
-  animation: drift 44s var(--ease-soft) infinite alternate;
-  will-change: transform;
 }
+/* Vanta вставляет сюда <canvas> и двигает фон сам — CSS-дрейф больше не нужен. */
 
 /* Мягкая реакция на курсор — отдельным слоем, чтобы не пересобирать фон на каждое движение.
    Свечение, а не частицы: тише и не тянет фокус. Тач-устройствам не показываем. */
@@ -86,10 +85,6 @@ button { font: inherit; color: inherit; }
 }
 @media (hover: hover) and (pointer: fine) {
   .glow.is-on { opacity: 1; }
-}
-@keyframes drift {
-  from { transform: scale(1) translate3d(0, 0, 0); }
-  to   { transform: scale(1.08) translate3d(-2%, 1.5%, 0); }
 }
 
 .veil {
@@ -826,7 +821,7 @@ button { font: inherit; color: inherit; }
 
 /* ═══════════════ reduced motion ═══════════════ */
 @media (prefers-reduced-motion: reduce) {
-  .smoke { animation: none; }
+  /* Vanta под reduced-motion не запускается (guard в HTML) — остаётся статический градиент. */
   .glow { display: none; }
   .screen[data-anim] { animation: plain-in 200ms linear !important; }
   .stage.is-flying { filter: none; }
