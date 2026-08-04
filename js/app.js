@@ -118,22 +118,22 @@ function syncChrome() {
 }
 
 /* фон реагирует на курсор — одно свечение, обновляется по кадру */
-if (!reduced.matches) {
-  const glow = $('#glow');
-  let px = 0, py = 0, queued = false;
-  addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    px = e.clientX; py = e.clientY;
-    glow.classList.add('is-on');
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      glow.style.setProperty('--mx', px + 'px');
-      glow.style.setProperty('--my', py + 'px');
-    });
-  }, { passive: true });
-}
+// if (!reduced.matches) {
+//   const glow = $('#glow');
+//   let px = 0, py = 0, queued = false;
+//   addEventListener('pointermove', (e) => {
+//     if (e.pointerType !== 'mouse') return;
+//     px = e.clientX; py = e.clientY;
+//     glow.classList.add('is-on');
+//     if (queued) return;
+//     queued = true;
+//     requestAnimationFrame(() => {
+//       queued = false;
+//       glow.style.setProperty('--mx', px + 'px');
+//       glow.style.setProperty('--my', py + 'px');
+//     });
+//   }, { passive: true });
+// }
 
 // тап во время полёта — прерывает
 addEventListener('pointerdown', () => {
