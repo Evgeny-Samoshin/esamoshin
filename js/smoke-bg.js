@@ -30,9 +30,9 @@
           midtoneColor: 0xcacaca,
           lowlightColor: 0x5f5b70,
           baseColor: 0xffffff,
-          blurFactor: 0.53,
+          blurFactor: 0.48,
           speed: 0.50,
-          zoom: 0.20
+          zoom: 0.40
         });
       } catch (e) { /* нет WebGL — живём с градиентом */ }
     }
