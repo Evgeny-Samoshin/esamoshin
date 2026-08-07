@@ -27,12 +27,12 @@
   --pad: clamp(20px, 5vw, 64px);
   --safe-t: max(var(--pad), env(safe-area-inset-top));
   --safe-b: max(var(--pad), env(safe-area-inset-bottom));
+  --maxw: 760px;
+  /* ширина колонки контент-страниц (обо мне, примеры, кейсы, блог) */
 
   /* тайминги: прямой ход уверенный, обратный быстрее */
   --t-dive: 700ms;
   --t-back: 460ms;
-  --t-flight: 780ms;
-  --t-blink: 620ms;
   --ease-dive: cubic-bezier(.22, .9, .28, 1);
   --ease-soft: cubic-bezier(.4, 0, .2, 1);
 }
@@ -43,15 +43,20 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  height: 100%;
+/* Контент-страницы прокручиваются; погружение (data-page=home) — фиксировано на весь вьюпорт. */
+html {
+  height: auto;
+  overflow-y: auto;
   margin: 0;
-  overflow: hidden;
-  background: var(--bg);
+  background: #F2F3F5;   /* перламутр-заглушка; сверху ложится дым (fixed, z-index -1) */
 }
-
+html[data-page="home"] {
+  height: 100%;
+  overflow: hidden;
+}
 body {
+  margin: 0;
+  min-height: 100%;
   font: 400 clamp(15px, 1.05vw + 12px, 18px)/1.6 var(--body);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -87,8 +92,6 @@ button {
 /* ═══════════════ фон-заглушка ═══════════════ */
 /* ponytail: статический перламутр + очень медленный дрейф. Сюда встанет fluid-дым. */
 .smoke {
-  --mx: 50%;
-  --my: 40%;
   position: fixed;
   inset: -20%;
   z-index: -1;
@@ -105,40 +108,21 @@ button {
 /* Мягкая реакция на курсор — отдельным слоем, чтобы не пересобирать фон на каждое движение.
    Свечение, а не частицы: тише и не тянет фокус. Тач-устройствам не показываем. */
 /* Курсорный дым-след (FluidSmoke) — прозрачный canvas, prepend-ится в body.
-   Над фоном-туманом (z-index -1), под контентом (z-index 1). */
+   Персистентный на всех страницах → fixed (библиотека вешает absolute). Над туманом (-1), под контентом (1). */
 body>canvas {
   z-index: 0;
+  position: fixed !important;
+  /* Размер в vw/vh, а не 100% (как ставит библиотека). vw/vh включают полосу прокрутки,
+     поэтому размер canvas не меняется, когда она появляется на длинной странице и пропадает
+     на главной (там overflow:hidden). Иначе это настоящий ресайз → fluid-солвер пересобирает
+     буферы и стирает дым ровно в момент вставки нового контента. */
+  width: 100vw !important;
+  height: 100vh !important;
 }
 
-.glow {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(340px 340px at var(--mx) var(--my),
-      rgba(255, 255, 255, .55) 0%, rgba(127, 178, 232, .10) 45%, rgba(255, 255, 255, 0) 70%);
-  transition: opacity 1.2s var(--ease-soft);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .glow.is-on {
-    opacity: 1;
-  }
-}
-
-.veil {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background: var(--bg);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity calc(var(--t-blink) / 2) var(--ease-soft);
-}
-
-.veil.is-on {
-  opacity: 1;
+/* Обёртка навигации: вне потока, чтобы .stage/контент верстались как без неё. */
+#page {
+  display: contents;
 }
 
 /* ═══════════════ сцена и экраны ═══════════════ */
@@ -197,7 +181,6 @@ body>canvas {
 }
 
 .display em,
-.phase-t em,
 .logo-sub em {
   font-style: italic;
 }
@@ -231,6 +214,7 @@ body>canvas {
   color: var(--btn-fg);
   font-size: 15px;
   font-weight: 500;
+  text-decoration: none;
   cursor: pointer;
   transition: border-color .3s, background .3s, color .3s, transform .3s var(--ease-soft);
 }
@@ -320,7 +304,7 @@ body>canvas {
   margin-top: clamp(34px, 6vh, 64px);
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 24px;
   justify-content: center;
 }
 
@@ -364,426 +348,42 @@ body>canvas {
   animation: rise-in 620ms var(--ease-dive) 860ms backwards;
 }
 
-/* ═══════════════ ФАЗЫ ═══════════════ */
-.pane--phases {
-  position: relative;
-  padding: calc(var(--safe-t) + 76px) 0 calc(var(--safe-b) + 30px);
-  gap: 0;
-}
-
-.phases-head {
-  padding: 0 var(--pad) clamp(18px, 4vh, 40px);
-}
-
-.phases-head .back,
-.types-head .back {
-  margin-bottom: 4px;
-}
-
-.phases-head .display {
-  margin-top: 6px;
-}
-
-.track {
-  flex: 1;
-  min-height: 0;
+/* Тонкие двери: тихий ряд ссылок под кнопками. Появляются последними, шёпотом. */
+.start-doors {
+  margin-top: clamp(22px, 4vh, 40px);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(16px, 2.4vh, 30px);
-  /* без длинного хвоста: снап должен доводить ровно до конца прокрутки,
-     иначе край не достигается и скролл не уводит на следующий экран */
-  padding: 48px var(--pad) clamp(16px, 5vh, 48px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
-  scroll-snap-type: y proximity;
-  /* магнит помогает остановиться, но не держит — скролл-джекинг раздражает */
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  /* карточка растворяется у края, а не обрезается по линии */
-  mask-image: linear-gradient(to bottom, transparent 0, #000 72px, #000 calc(100% - 24px), transparent 100%);
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: baseline;
 }
 
-.track::-webkit-scrollbar {
-  display: none;
-}
-
-.phase {
-  flex: 0 0 auto;
-  width: min(560px, 100%);
-  scroll-snap-align: center;
-  padding: clamp(26px, 3vw, 40px);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  /* ponytail: без backdrop-filter — размытие поверх живого фона пересчитывалось
-     каждый кадр и роняло прокрутку. Плотная заливка неотличима на глаз. */
-  background: rgba(252, 253, 254, .86);
-  transform-origin: 50% 0%;
-  /* уходит вверх-на-зрителя */
-  will-change: transform, opacity;
-}
-
-.phase-n {
-  font-size: 12px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.phase-opt {
-  margin-left: 8px;
-  padding: 2px 8px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  letter-spacing: .08em;
-  font-size: 10px;
-  color: var(--sky-ink);
-}
-
-.phase-t {
-  margin-top: 14px;
-  font-family: var(--display);
-  font-weight: 300;
-  font-size: clamp(28px, 2.6vw, 40px);
-  line-height: 1.1;
-}
-
-.phase-b {
-  margin-top: 16px;
-  color: var(--muted);
-  font-weight: 300;
-}
-
-.phase-get {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  font-size: 15px;
-}
-
-.phase-get span {
-  color: var(--sky-ink);
-}
-
-.phase--end {
-  border-style: dashed;
-  background: none;
-}
-
-.phase--end .btn {
-  margin-top: 24px;
-}
-
-/* ПК-подсказка: мышь справа от блока карточек, колёсико крутится — жест, а не результат */
-/* Конспект просит «справа от блока» — правый край занят карточками, иконка легла бы поверх.
-   Ставлю под блоком по центру: единственная свободная зона, жест читается так же. */
-.scroll-hint {
-  align-self: center;
-  padding-top: 14px;
-  color: var(--muted);
-  opacity: .75;
-  transition: opacity .5s;
-  pointer-events: none;
-}
-
-.scroll-hint-wheel {
-  animation: wheel 2.4s var(--ease-soft) infinite;
-}
-
-@keyframes wheel {
-
-  0%,
-  8% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  38% {
-    transform: translateY(13px);
-    opacity: .15;
-  }
-
-  46% {
-    transform: translateY(0);
-    opacity: 0;
-  }
-
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.scroll-hint.is-off {
-  opacity: 0;
-}
-
-/* на тач-экранах подсказка другая: первая карточка дёргается вверх до первого касания */
-@media (hover: none) {
-  .track:not(.is-touched) .phase[data-i="1"] {
-    animation: nudge 2.6s var(--ease-soft) 1s 2;
-  }
-
-  .scroll-hint {
-    display: none;
-  }
-}
-
-@keyframes nudge {
-
-  0%,
-  72%,
-  100% {
-    transform: translateY(0);
-  }
-
-  80% {
-    transform: translateY(-14px);
-  }
-
-  88% {
-    transform: translateY(0);
-  }
-}
-
-/* ═══════════════ ТИПЫ САЙТОВ ═══════════════ */
-.pane--types {
-  padding-top: calc(var(--safe-t) + 76px);
-  padding-bottom: calc(var(--safe-b) + 66px);
-  /* чтобы контент не уезжал под угловые ссылки */
-  overflow-y: auto;
-  gap: clamp(22px, 4vh, 44px);
-  justify-content: safe center;
-}
-
-.types {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-  gap: 24px;
-}
-
-.type {
-  position: relative;
-  padding: clamp(24px, 2.4vw, 36px);
-  background: rgba(255, 255, 255, .55);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  transition: background .35s;
-}
-
-.type:hover,
-.type:focus-within {
-  background: #fff;
-}
-
-.type-t {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(24px, 2vw, 30px);
-}
-
-.type-hit {
+.door {
+  appearance: none;
   border: 0;
-  padding: 0;
   background: none;
+  padding: 0;
+  cursor: pointer;
   font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.type-hit::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-
-/* кликается вся карточка */
-.type-b {
+  font-size: clamp(12px, 1vw, 14px);
+  letter-spacing: .04em;
   color: var(--muted);
-  font-weight: 300;
-  font-size: 15px;
-  flex: 1;
-}
-
-.type-link {
-  align-self: flex-start;
-  padding: 0 0 3px;
-  border-bottom: 1px solid var(--sky-deep);
-  color: var(--sky-ink);
-  font-size: 14px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity .3s, transform .3s, border-color .3s;
-}
-
-.type:hover .type-link,
-.type:focus-within .type-link {
-  opacity: 1;
-  transform: none;
-}
-
-@media (hover: none) {
-  .type-link {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.types-cta {
-  display: flex;
-  justify-content: center;
-}
-
-/* ═══════════════ ЗАСЕЧКА «ГДЕ Я» ═══════════════ */
-/* Тихая, не прогресс-бар: четыре штриха вверху по центру. Последний — цель (бриф). */
-.trail {
-  position: fixed;
-  top: calc(var(--safe-t) + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  display: flex;
-  gap: 7px;
-  pointer-events: none;
-}
-
-.trail[hidden] {
-  display: none;
-}
-
-.trail-tick {
-  width: 16px;
-  height: 1px;
-  background: var(--line);
-  transition: background .5s var(--ease-soft), width .5s var(--ease-dive);
-}
-
-.trail-tick.is-passed {
-  background: var(--muted);
-}
-
-.trail-tick.is-here {
-  width: 26px;
-  background: var(--sky-deep);
-}
-
-.trail-tick--goal {
-  width: 6px;
-}
-
-/* ═══════════════ УГЛЫ ═══════════════ */
-.corners {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  pointer-events: none;
-}
-
-.corner {
-  position: absolute;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: 13px;
-  letter-spacing: .06em;
   text-decoration: none;
-  cursor: pointer;
-  padding: 10px 4px;
-  transition: color .3s;
+  transition: color 160ms var(--ease-soft);
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.corner:hover {
+.door:hover,
+.door:focus-visible {
   color: var(--sky-ink);
 }
 
-.corner--tl,
-.corner--bl {
-  justify-content: flex-start;
+.door-sep {
+  color: var(--line-ui);
+  user-select: none;
 }
 
-.corner--br {
-  justify-content: flex-end;
-}
-
-.corner--tl {
-  top: var(--safe-t);
-  left: calc(var(--pad) - 4px);
-}
-
-.corner--tr {
-  top: var(--safe-t);
-  right: var(--pad);
-  width: 36px;
-  height: 36px;
-  min-width: 0;
-  min-height: 0;
-  padding: 0;
-  border: 1px solid var(--line-ui);
-  border-radius: 50%;
-  font-family: var(--display);
-  font-size: 19px;
-  line-height: 1;
-  color: var(--ink);
-  transition: border-color .3s, color .3s;
-}
-
-/* круг оставляем 36px, зону нажатия расширяем до 44 */
-.corner--tr::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-}
-
-.corner--tr:hover {
-  border-color: var(--sky-deep);
-}
-
-.corner--bl {
-  bottom: var(--safe-b);
-  left: calc(var(--pad) - 4px);
-}
-
-.corner--br {
-  bottom: var(--safe-b);
-  right: calc(var(--pad) - 4px);
-  color: var(--ink);
-}
-
-.corner--br::after {
-  content: "";
-  display: block;
-  height: 1px;
-  margin-top: 3px;
-  background: var(--sky);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform .35s var(--ease-soft);
-}
-
-.corner--br:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
+.screen--start.is-first .start-doors {
+  animation: rise-in 620ms var(--ease-dive) 1080ms backwards;
 }
 
 /* ═══════════════ БРИФ ═══════════════ */
@@ -1181,71 +781,8 @@ body>canvas {
   color: #fff;
 }
 
-.works {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-  gap: clamp(20px, 2.4vw, 36px);
-}
-
-.work {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.work[hidden] {
-  display: none;
-}
-
-.work-img {
-  aspect-ratio: 4 / 3;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-}
-
-.work-img--1 {
-  background: linear-gradient(145deg, #E7EAEE 0%, #CFD9E6 55%, #B8CBE2 100%);
-}
-
-.work-img--2 {
-  background: linear-gradient(145deg, #EDEEF0 0%, #D8DCE2 60%, #C3CAD3 100%);
-}
-
-.work-img--3 {
-  background: linear-gradient(160deg, #E9EBEE 0%, #D4D7DC 50%, #BFC4CB 100%);
-}
-
-.work-img--4 {
-  background: linear-gradient(135deg, #E4E9F0 0%, #C6D4E4 60%, #A8BFDA 100%);
-}
-
-.work-t {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: 22px;
-}
-
-.work-b {
-  color: var(--muted);
-  font-weight: 300;
-  font-size: 15px;
-}
-
-.work-type {
-  font-size: 12px;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--sky-ink);
-}
-
-.works-empty {
-  margin-top: 24px;
-  color: var(--muted);
-}
-
 /* ═══════════════════════════════════════════════
-   ПЕРЕХОДЫ: погружение / моргание / полёт
+   ПЕРЕХОДЫ ЭКРАНОВ ПОГРУЖЕНИЯ: нырок вперёд / шаг назад
    ═══════════════════════════════════════════════ */
 @keyframes dive-out {
   from {
@@ -1301,40 +838,6 @@ body>canvas {
   }
 }
 
-@keyframes flight-out {
-  from {
-    transform: scale(1);
-    opacity: 1;
-    filter: blur(0);
-  }
-
-  40% {
-    transform: scale(1.9);
-    opacity: .5;
-    filter: blur(20px);
-  }
-
-  to {
-    transform: scale(3.4);
-    opacity: 0;
-    filter: blur(34px);
-  }
-}
-
-@keyframes flight-in {
-  from {
-    transform: scale(.72);
-    opacity: 0;
-    filter: blur(16px);
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-    filter: blur(0);
-  }
-}
-
 @keyframes plain-in {
   from {
     opacity: 0;
@@ -1361,21 +864,8 @@ body>canvas {
   animation: back-in var(--t-back) var(--ease-dive) 60ms backwards;
 }
 
-.screen[data-anim="flight-out"] {
-  animation: flight-out var(--t-flight) cubic-bezier(.5, 0, .75, .4) forwards;
-}
-
-.screen[data-anim="flight-in"] {
-  animation: flight-in calc(var(--t-flight) * .5) var(--ease-dive) calc(var(--t-flight) * .5) backwards;
-}
-
 .screen[data-anim="plain-in"] {
   animation: plain-in 380ms var(--ease-soft);
-}
-
-/* полёт «сквозь сайт»: весь кадр смазывается */
-.stage.is-flying {
-  filter: blur(1.5px);
 }
 
 /* ═══════════════ адаптив ═══════════════ */
@@ -1400,14 +890,6 @@ body>canvas {
     padding-bottom: calc(var(--safe-b) + 66px);
     overflow-y: auto;
   }
-
-  .corner {
-    font-size: 12px;
-  }
-
-  .phase {
-    flex-basis: 84vw;
-  }
 }
 
 @media (max-height: 560px) and (orientation: landscape) {
@@ -1424,25 +906,8 @@ body>canvas {
 /* ═══════════════ reduced motion ═══════════════ */
 @media (prefers-reduced-motion: reduce) {
 
-  /* Vanta под reduced-motion не запускается (guard в HTML) — остаётся статический градиент. */
-  .glow {
-    display: none;
-  }
-
   .screen[data-anim] {
     animation: plain-in 200ms linear !important;
-  }
-
-  .stage.is-flying {
-    filter: none;
-  }
-
-  .track:not(.is-touched) .phase[data-i="1"] {
-    animation: none;
-  }
-
-  .scroll-hint-wheel {
-    animation: none;
   }
 
   .screen--start.is-active .logo,
@@ -1451,12 +916,148 @@ body>canvas {
     animation: none;
   }
 
-  .phase {
-    transform: none !important;
-    opacity: 1 !important;
-  }
-
   * {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══════════════ нырок между страницами ═══════════════ */
+/* Анимируем ТОЛЬКО блок контента (#page) — дым и курсорный след не участвуют и остаются живыми.
+   Фиксацию во вьюпорте на время анимации ставит nav.js (inline), здесь — сам нырок. */
+#page.is-out { animation: dive-out var(--t-dive) var(--ease-dive) both; }
+#page.is-in { animation: dive-in var(--t-dive) var(--ease-dive) both; }
+
+/* ═══════════════════════════════════════════════
+   КОНТЕНТ-СТРАНИЦЫ (обо мне, примеры работ, кейсы, блог)
+   Обёртка #page с классом .doc. Скролл-поток задаёт html (см. верх файла).
+   Общие .btn/.display/.eyebrow/.lede/.filter — из immersion выше (приоритет style.css).
+   Здесь — только структура и то, чего в immersion нет.
+   ═══════════════════════════════════════════════ */
+
+/* Контент поднимаем над дымом (.smoke z-index -1, курсорный canvas 0), иначе секции уходят под них. */
+.doc > header,
+.doc > main,
+.doc > section,
+.doc > footer { position: relative; z-index: 1; }
+
+.wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad); }
+.prose a { color: var(--sky-ink); }
+
+/* Шапка */
+.site-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(16px, 3vw, 28px) var(--pad);
+  border-bottom: 1px solid var(--line);
+}
+.site-logo {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(20px, 3vw, 26px);
+  letter-spacing: .06em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-nav { display: flex; flex-wrap: wrap; gap: clamp(12px, 2vw, 22px); }
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: clamp(13px, 1vw, 15px);
+  letter-spacing: .02em;
+  transition: color 160ms ease;
+}
+.site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--ink); }
+
+/* Заголовки контент-страниц (размеры; базовый .display и .display em — из immersion) */
+.doc h1.display { font-size: clamp(34px, 6vw, 58px); }
+.doc h2.display { font-size: clamp(26px, 4vw, 38px); }
+.doc .display em { color: var(--sky-ink); }
+
+.prose { padding-block: clamp(40px, 7vw, 88px); }
+.prose > * + * { margin-top: 1.1em; }
+.prose h2 { margin-top: 1.6em; }
+.prose ul { padding-left: 1.2em; }
+.prose li + li { margin-top: .4em; }
+
+/* Полоса CTA */
+.cta { text-align: center; padding: clamp(48px, 8vw, 96px) var(--pad); border-top: 1px solid var(--line); }
+.cta .display { margin-bottom: .6em; }
+
+/* Портрет (обо мне) */
+.portrait {
+  width: clamp(140px, 22vw, 200px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(160deg, var(--logo-2), var(--logo));
+  border: 1px solid var(--line);
+}
+
+/* Подвал: перелинковка + соцсети */
+.site-foot {
+  border-top: 1px solid var(--line);
+  padding: clamp(36px, 6vw, 64px) var(--pad) clamp(28px, 4vw, 44px);
+  color: var(--muted);
+  font-size: clamp(13px, 1vw, 15px);
+}
+.foot-cols {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(20px, 4vw, 40px);
+}
+.foot-cols h3 {
+  font: 500 13px/1 var(--body);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.foot-cols a { color: var(--muted); text-decoration: none; display: block; padding: 3px 0; }
+.foot-cols a:hover { color: var(--ink); }
+.foot-note {
+  max-width: var(--maxw);
+  margin: clamp(24px, 4vw, 40px) auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+/* Примеры работ: сетка кейсов (фильтр .filters/.filter — из immersion выше) */
+.cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: clamp(20px, 3vw, 32px);
+}
+.case { display: flex; flex-direction: column; }
+.case-img {
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, var(--logo-2), var(--logo));
+  margin-bottom: 14px;
+}
+.case-t { font: 500 18px/1.3 var(--body); margin: 0 0 6px; }
+.case-b { color: var(--muted); font-size: 15px; margin: 0 0 10px; flex: 1; }
+.case-tag { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--sky-ink); }
+.cases-empty { color: var(--muted); }
+
+/* Обо мне: шесть фаз */
+.phases-h { font: 500 clamp(17px, 2vw, 20px) var(--body); letter-spacing: .02em; margin-top: 1.6em; }
+.phases { margin-top: 1.2em; display: grid; gap: clamp(22px, 3vw, 32px); }
+.ph { display: grid; grid-template-columns: auto 1fr; gap: clamp(14px, 2vw, 20px); align-items: start; }
+.ph-n { font-family: var(--display); font-size: clamp(30px, 4vw, 44px); line-height: .9; color: var(--sky-ink); }
+.ph h4 { font: 500 clamp(17px, 2vw, 20px) var(--body); margin: 0 0 .3em; }
+.ph p { margin: 0; color: var(--muted); }
+.ph .got { margin-top: .4em; color: var(--ink); font-size: 15px; }
+.ph .got b { font-weight: 500; }
+.phase-tag { font-size: .62em; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+
+/* Обо мне: какие бывают сайты */
+.types { margin-top: 1em; }
+.types dt { font: 500 clamp(16px, 1.6vw, 18px) var(--body); margin-top: 1.2em; }
+.types dd { margin: .3em 0 0; color: var(--muted); }
+.types dd a { white-space: nowrap; }

@@ -1,11 +1,43 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-page="home">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SAMOSHIN — сайты для бизнеса</title>
 <meta name="description" content="Разработка сайтов для бизнеса: лендинги, визитки, корпоративные сайты, интернет-магазины. Прозрачный процесс: план работ с этапами и ценами до начала работы.">
 <meta name="theme-color" content="#F2F3F5">
+<link rel="canonical" href="https://samoshin.ru/">
+<!-- Open Graph / Twitter — превью при репосте в соцсети. og:image заменить на реальную картинку 1200×630. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SAMOSHIN">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="SAMOSHIN — сайты для бизнеса">
+<meta property="og:description" content="Разработка сайтов для бизнеса: лендинги, визитки, корпоративные сайты, магазины. Прозрачный процесс: план работ с этапами и ценами до начала.">
+<meta property="og:url" content="https://samoshin.ru/">
+<meta property="og:image" content="https://samoshin.ru/og-default.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SAMOSHIN — сайты для бизнеса">
+<meta name="twitter:description" content="Сайты для бизнеса с прозрачным процессом: план с этапами и ценами до начала работы.">
+<meta name="twitter:image" content="https://samoshin.ru/og-default.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "SAMOSHIN",
+  "description": "Разработка сайтов для бизнеса: лендинги, визитки, корпоративные сайты, интернет-магазины.",
+  "url": "https://samoshin.ru/",
+  "email": "hello@samoshin.ru",
+  "areaServed": "RU",
+  "priceRange": "$$",
+  "founder": { "@type": "Person", "name": "Евгений Самошин" },
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Лендинг" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Сайт-визитка" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Корпоративный сайт" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Интернет-магазин" } }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -13,11 +45,11 @@
 </head>
 <body>
 
-<!-- Фон-дым (Vanta.FOG). Статический градиент в CSS — запасной фон, если WebGL/скрипт не поднялся. -->
+<!-- Персистентный фон-дым (Vanta.FOG). Живёт вне #page — не пересоздаётся при навигации. -->
 <div class="smoke" id="smoke" aria-hidden="true"></div>
-<div class="glow" id="glow" aria-hidden="true"></div>
-<div class="veil" aria-hidden="true"></div>
 
+<!-- #page — единственное, что подменяет роутер (display:contents, вне потока). -->
+<div id="page" data-page="home">
 <main class="stage" id="stage">
 
   <!-- ═══════════════ СТАРТ ═══════════════ -->
@@ -26,123 +58,15 @@
       <h1 class="logo">SAMOSHIN</h1>
       <p class="logo-sub">Сайты для бизнеса</p>
       <div class="start-actions">
-        <button class="btn btn--primary" data-go="brief" data-entry="start-button">Узнать стоимость сайта</button>
-        <button class="btn" data-go="branch-intro">Познакомиться с процессом</button>
+        <button class="btn btn--primary" data-go="brief" data-entry="start-button">Заказать сайт</button>
+        <a class="btn" href="primery.html">Примеры работ</a>
       </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════ ВЕТКА 1: ОБЕЩАНИЕ ═══════════════ -->
-  <section class="screen" id="s-branch-intro" data-screen="branch-intro" hidden>
-    <div class="pane pane--center">
-      <button class="back" data-back>← Назад</button>
-      <p class="eyebrow">Как я работаю</p>
-      <h2 class="display">Ты <em>видишь</em> каждый шаг<br>и платишь только за то,<br>что уже сделано</h2>
-      <p class="lede">До начала работы ты получаешь план: из каких этапов состоит проект, что выходит на каждом,
-        сколько это стоит и когда будет готово. Дальше — этап за этапом. Ничего не начинается,
-        пока ты не увидел и не принял предыдущее.</p>
-      <p class="lede">Шесть фаз. Дальше — что происходит внутри каждой.</p>
-      <button class="btn btn--primary" data-go="phases">Смотреть процесс</button>
-    </div>
-  </section>
-
-  <!-- ═══════════════ ВЕТКА 2: ШЕСТЬ ФАЗ ═══════════════ -->
-  <section class="screen" id="s-phases" data-screen="phases" hidden>
-    <div class="pane pane--phases">
-      <header class="phases-head">
-        <button class="back" data-back>← Назад</button>
-        <p class="eyebrow">Процесс</p>
-        <h2 class="display display--sm">Шесть фаз</h2>
-      </header>
-
-      <div class="track" id="track" tabindex="0" aria-label="Фазы процесса, листается вниз">
-        <article class="phase" data-i="1">
-          <p class="phase-n">Фаза 1</p>
-          <h3 class="phase-t">Бриф <em>и план</em></h3>
-          <p class="phase-b">Заполняешь бриф, я составляю план с этапами и ценами, созваниваемся и правим, пока всё не сойдётся.</p>
-          <p class="phase-get"><span>Получаешь:</span> план, где видно за что и когда платишь.</p>
-        </article>
-        <article class="phase" data-i="2">
-          <p class="phase-n">Фаза 2</p>
-          <h3 class="phase-t">Анализ <em>проекта</em></h3>
-          <p class="phase-b">Смотрю конкурентов, разбираю твоих клиентов, собираю структуру будущего сайта.</p>
-          <p class="phase-get"><span>Получаешь:</span> карту сайта и путь клиента.</p>
-        </article>
-        <article class="phase" data-i="3">
-          <p class="phase-n">Фаза 3</p>
-          <h3 class="phase-t"><em>Дизайн</em></h3>
-          <p class="phase-b">Подбираем референсы, согласуем концепцию, готовим тексты и изображения, собираю прототип и отрисовываю макет.</p>
-          <p class="phase-get"><span>Получаешь:</span> макет, включая мобильную и десктопную версию.</p>
-        </article>
-        <article class="phase" data-i="4">
-          <p class="phase-n">Фаза 4</p>
-          <h3 class="phase-t"><em>Разработка</em></h3>
-          <p class="phase-b">Вёрстка, код, адаптив под телефоны и планшеты, проверка во всех браузерах.</p>
-          <p class="phase-get"><span>Получаешь:</span> живой сайт на тестовой ссылке.</p>
-        </article>
-        <article class="phase" data-i="5">
-          <p class="phase-n">Фаза 5</p>
-          <h3 class="phase-t"><em>Запуск</em></h3>
-          <p class="phase-b">Деплой на хостинг, подключение домена, при необходимости — админка, чтобы ты сам менял тексты и фото.</p>
-          <p class="phase-get"><span>Получаешь:</span> работающий сайт на твоём домене.</p>
-        </article>
-        <article class="phase" data-i="6">
-          <p class="phase-n">Фаза 6 <span class="phase-opt">по желанию</span></p>
-          <h3 class="phase-t"><em>Поддержка</em></h3>
-          <p class="phase-b">Чиню технические баги, правлю контент, слежу, что всё живо.</p>
-          <p class="phase-get"><span>Получаешь:</span> уверенность, что сайт под присмотром.</p>
-        </article>
-        <article class="phase phase--end" data-i="7">
-          <h3 class="phase-t">Это <em>весь</em> процесс</h3>
-          <p class="phase-b">Теперь — какие сайты бывают и какой нужен тебе.</p>
-          <button class="btn btn--primary" data-go="site-types">Типы сайтов</button>
-        </article>
-      </div>
-
-      <!-- ПК-подсказка: показывает жест буквально — колёсико крутится -->
-      <div class="scroll-hint" id="hint-scroll" aria-hidden="true">
-        <svg viewBox="0 0 26 40" width="26" height="40" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x=".6" y=".6" width="24.8" height="38.8" rx="12.4"/>
-          <circle class="scroll-hint-wheel" cx="13" cy="11" r="1.9" fill="currentColor" stroke="none"/>
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════ ВЕТКА 3: ТИПЫ САЙТОВ ═══════════════ -->
-  <section class="screen" id="s-site-types" data-screen="site-types" hidden>
-    <div class="pane pane--types">
-      <header class="types-head">
-        <button class="back" data-back>← Назад</button>
-        <p class="eyebrow">Что бывает</p>
-        <h2 class="display display--sm">Типы <em>сайтов</em></h2>
-      </header>
-      <!-- один клик = действие: кликается вся карточка, кнопка внутри заголовка растянута на неё -->
-      <div class="types">
-        <article class="type" data-type="landing">
-          <h3 class="type-t"><button class="type-hit" data-portfolio="landing" aria-label="Лендинг — посмотреть примеры">Лендинг</button></h3>
-          <p class="type-b">Подходит, когда нужно продать что-то одно: услугу, продукт, курс или акцию. Вся страница ведёт к одному — конверсии посетителя в звонок или заявку.</p>
-          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
-        </article>
-        <article class="type" data-type="card">
-          <h3 class="type-t"><button class="type-hit" data-portfolio="card" aria-label="Сайт-визитка — посмотреть примеры">Сайт-визитка</button></h3>
-          <p class="type-b">Подходит, когда за делом стоишь ты или небольшая команда. Рассказать, кто ты и что предлагаешь, показать работы и дать контакты. Обычно 4–8 страниц.</p>
-          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
-        </article>
-        <article class="type" data-type="corp">
-          <h3 class="type-t"><button class="type-hit" data-portfolio="corp" aria-label="Корпоративный сайт — посмотреть примеры">Корпоративный сайт</button></h3>
-          <p class="type-b">Подходит, когда сайту нужно подробно отразить компанию: направления, команда, вакансии, документы, новости. Более 10 страниц.</p>
-          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
-        </article>
-        <article class="type" data-type="shop">
-          <h3 class="type-t"><button class="type-hit" data-portfolio="shop" aria-label="Интернет-магазин — посмотреть примеры">Интернет-магазин</button></h3>
-          <p class="type-b">Подходит, когда нужно продавать много и онлайн: каталог, корзина, оплата — покупка идёт без твоего участия.</p>
-          <span class="type-link" aria-hidden="true">Посмотреть примеры</span>
-        </article>
-      </div>
-      <div class="types-cta">
-        <button class="btn btn--primary" data-go="brief" data-entry="walked">Узнать стоимость своего сайта</button>
-      </div>
+      <!-- Тонкие двери в контент-слой: тихие, не спорят с двумя кнопками. Дают краулеру внутренние ссылки. -->
+      <nav class="start-doors" aria-label="О специалисте и вопросах">
+        <a class="door" href="o-mne.html">Обо мне</a>
+        <span class="door-sep" aria-hidden="true">·</span>
+        <button class="door" id="faq-open">Вопросы</button>
+      </nav>
     </div>
   </section>
 
@@ -292,30 +216,6 @@
 
 </main>
 
-<!-- ═══════════════ ЗАСЕЧКА «ГДЕ Я» ═══════════════ -->
-<!-- Четыре штриха: три экрана ветки + цель. Декоративная, не кликается — навигация в углах. -->
-<div class="trail" id="trail" hidden aria-hidden="true">
-  <span class="trail-tick" data-for="branch-intro"></span>
-  <span class="trail-tick" data-for="phases"></span>
-  <span class="trail-tick" data-for="site-types"></span>
-  <span class="trail-tick trail-tick--goal" data-for="brief"></span>
-</div>
-
-<!-- ═══════════════ УГЛЫ (только внутри ветки) ═══════════════ -->
-<nav class="corners" id="corners" hidden aria-label="Быстрые переходы">
-  <button class="corner corner--tl" data-portfolio="all">Портфолио</button>
-  <button class="corner corner--tr" id="faq-open" aria-label="Частые вопросы">
-    <span aria-hidden="true">?</span>
-  </button>
-  <a class="corner corner--bl" id="call-link" href="tel:+79000000000">
-    <svg viewBox="0 0 20 20" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M17.5 14.1v2.3a1.5 1.5 0 0 1-1.7 1.5 15 15 0 0 1-6.5-2.3 14.6 14.6 0 0 1-4.5-4.5A15 15 0 0 1 2.5 4.5 1.5 1.5 0 0 1 4 2.8h2.3a1.5 1.5 0 0 1 1.5 1.3c.1.7.3 1.4.5 2.1a1.5 1.5 0 0 1-.3 1.6l-1 1a12 12 0 0 0 4.5 4.5l1-1a1.5 1.5 0 0 1 1.6-.3c.7.3 1.4.4 2.1.5a1.5 1.5 0 0 1 1.3 1.6Z"/>
-    </svg>
-    <span class="sr-only">Позвонить</span>
-  </a>
-  <button class="corner corner--br" data-go="brief" data-entry="corner-icon">Узнать стоимость</button>
-</nav>
-
 <!-- ═══════════════ FAQ ═══════════════ -->
 <dialog class="overlay overlay--faq" id="ov-faq" aria-labelledby="faq-title">
   <div class="overlay-inner">
@@ -353,97 +253,15 @@
     </div>
   </div>
 </dialog>
+</div><!-- /#page -->
 
-<!-- ═══════════════ ПОРТФОЛИО ═══════════════ -->
-<dialog class="overlay overlay--work" id="ov-portfolio" aria-labelledby="pf-title">
-  <div class="overlay-inner">
-    <button class="overlay-close" data-close-overlay aria-label="Закрыть">×</button>
-    <h2 class="display display--sm" id="pf-title">Работы</h2>
-    <div class="filters" id="pf-filters" role="group" aria-label="Фильтр по типу сайта">
-      <button class="filter is-on" data-filter="all">Все</button>
-      <button class="filter" data-filter="landing">Лендинги</button>
-      <button class="filter" data-filter="card">Визитки</button>
-      <button class="filter" data-filter="corp">Корпоративные</button>
-      <button class="filter" data-filter="shop">Магазины</button>
-    </div>
-    <div class="works" id="pf-works">
-      <!-- ponytail: превью — CSS-плашки. Появятся скриншоты — меняешь div.work-img на <img alt="…">. -->
-      <article class="work" data-type="landing">
-        <div class="work-img work-img--1" role="img" aria-label="Превью лендинга арбитражного управляющего"></div>
-        <h3 class="work-t">Лендинг арбитражного управляющего</h3>
-        <p class="work-b">Банкротство физических лиц. Одна страница, одна задача — заявка на консультацию.</p>
-        <p class="work-type">Лендинг</p>
-      </article>
-      <article class="work" data-type="card">
-        <div class="work-img work-img--2" role="img" aria-label="Превью сайта швейного цеха"></div>
-        <h3 class="work-t">Швейный цех: шторы и текстиль</h3>
-        <p class="work-b">Производство под заказ. Каталог работ, расчёт и контакты.</p>
-        <p class="work-type">Сайт-визитка</p>
-      </article>
-      <article class="work" data-type="card">
-        <div class="work-img work-img--3" role="img" aria-label="Превью сайта студии изделий из керамогранита"></div>
-        <h3 class="work-t">Студия изделий из керамогранита</h3>
-        <p class="work-b">Кухни, декор, мебель. Показать материал и работы так, чтобы было видно качество.</p>
-        <p class="work-type">Сайт-визитка</p>
-      </article>
-      <article class="work" data-type="corp">
-        <div class="work-img work-img--4" role="img" aria-label="Превью корпоративного сайта завода нефтегазового оборудования"></div>
-        <h3 class="work-t">Завод нефтегазового оборудования</h3>
-        <p class="work-b">Направления, производство, документы, вакансии. Многостраничная структура под каталог продукции.</p>
-        <p class="work-type">Корпоративный сайт</p>
-      </article>
-    </div>
-    <p class="works-empty" id="pf-empty" hidden>В этом типе работ пока нет. Ближайшая — в соседнем фильтре.</p>
-  </div>
-</dialog>
-
-<script src="js/overscroll-nav.js"></script>
-<script src="js/app.js"></script>
-
-<!-- Фон-дым. Тяжёлые библиотеки грузятся последними, поверх статического градиента-заглушки. -->
+<!-- Персистентный шелл: дым + роутер. Один набор на все страницы; при мягкой навигации не перезапускается. -->
 <script src="js/vendor/three.r134.min.js"></script>
 <script src="js/vendor/vanta.fog.min.js"></script>
-<script>
-  // Уважаем reduced-motion и не падаем, если библиотека/WebGL недоступны — остаётся градиент.
-  // ?nofog — быстрый выключатель для сравнения: мешает ли фон отклику жестов на этой машине.
-  if (window.VANTA && !matchMedia('(prefers-reduced-motion: reduce)').matches
-      && !location.search.includes('nofog')) {
-    try {
-      VANTA.FOG({
-        el: '#smoke',
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        highlightColor: 0x9d9c99,
-        midtoneColor: 0xcacaca,
-        lowlightColor: 0x5f5b70,
-        baseColor: 0xffffff,
-        blurFactor: 0.53,
-        speed: 0.50,
-        zoom: 0.20
-      });
-    } catch (e) { /* нет WebGL — живём с градиентом */ }
-  }
-</script>
-
-<!-- Курсорный дым-след (FluidSmoke). Прозрачный слой только следа: sourceCount 0.
-     mount вернёт null под reduced-motion / без WebGL2 — тогда просто нет следа. -->
 <script src="js/smoke.js"></script>
-<script>
-  if (!location.search.includes('notrail')) {
-    var cursorTrail = FluidSmoke.mount(document.body, {
-      transparent: true,
-      sourceCount: 0,               // без фонового дыма — фон даёт Vanta
-      smokeLight: '#fafafa',
-      smokeDark: '#b8b8b8',
-      cursorColor: '#AAAAAA',       // небесно-синий акцент в следе
-      accentMix: 1
-    });
-    // Библиотека prepend-ит canvas как фон (за контентом). Поднимаем над туманом (см. CSS body>canvas).
-  }
-</script>
-</script>
+<script src="js/smoke-bg.js"></script>
+<script src="js/overscroll-nav.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/nav.js"></script>
 </body>
 </html>

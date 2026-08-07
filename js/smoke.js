@@ -347,8 +347,14 @@ function mount(container = document.body, options = {}) {
   }
 
   function resizeCanvas() {
-    canvas.width = canvas.clientWidth || 1;   // ponytail: 1x без dpr — дым размытый, ретина не нужна
-    canvas.height = canvas.clientHeight || 1;
+    const w = canvas.clientWidth || 1;        // ponytail: 1x без dpr — дым размытый, ретина не нужна
+    const h = canvas.clientHeight || 1;
+    // Пересобираем буферы только при реальной смене размера: initFramebuffers стирает симуляцию,
+    // а ResizeObserver следит за контейнером и срабатывает на любое изменение его высоты
+    // (например, при смене страницы роутером) — дым не должен из-за этого сбрасываться.
+    if (canvas.width === w && canvas.height === h) return;
+    canvas.width = w;
+    canvas.height = h;
     initFramebuffers();
   }
   resizeCanvas();
