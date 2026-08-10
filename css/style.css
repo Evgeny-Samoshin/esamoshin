@@ -224,11 +224,8 @@ body>canvas {
 }
 
 .btn--primary {
-  /* border-color: var(--ink);
-  background: var(--ink); */
   color: #fff;
-  background: rgb(0 0 0 / 22%);
-  /* border-radius: 16px; */
+  background: #1c1e22e8;
   box-shadow: 0 4px 30px rgb(227 227 227);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
