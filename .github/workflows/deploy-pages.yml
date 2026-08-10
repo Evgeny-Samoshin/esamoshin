@@ -13,10 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy to GitHub Pages
-        uses: jamesives/github-pages-deploy-action@v6
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          branch: gh-pages
-          folder: .
-          clean: true
-          commit_message: "Deploy site to GitHub Pages"
+          path: .
+
+      - name: Deploy to Pages
+        uses: actions/deploy-pages@v1
