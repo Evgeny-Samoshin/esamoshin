@@ -1,0 +1,22 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - feat/hybrid-structure-router
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: jamesives/github-pages-deploy-action@v6
+        with:
+          branch: gh-pages
+          folder: .
+          clean: true
+          commit_message: "Deploy site to GitHub Pages"
