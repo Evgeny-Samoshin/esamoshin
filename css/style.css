@@ -279,7 +279,7 @@ body>canvas {
   background-clip: text;
   color: transparent;
     /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
-  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 30%));
+  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%));
   filter: var(--relief);
   user-select: none;
 }
