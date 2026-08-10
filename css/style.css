@@ -189,15 +189,18 @@ body>canvas {
 
 /* ═══════════════ кнопки ═══════════════ */
 .btn {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 30px rgba #0000001a (0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   --btn-fg: var(--ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   padding: 15px 30px;
-  border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, .55);
   color: var(--btn-fg);
   font-size: 15px;
   font-weight: 500;
@@ -221,9 +224,15 @@ body>canvas {
 }
 
 .btn--primary {
-  border-color: var(--ink);
-  background: var(--ink);
+  /* border-color: var(--ink);
+  background: var(--ink); */
   color: #fff;
+  background: rgb(0 0 0 / 22%);
+  /* border-radius: 16px; */
+  box-shadow: 0 4px 30px rgb(227 227 227);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgb(163 163 163 / 30%);
 }
 
 .btn--primary:hover {
@@ -278,7 +287,7 @@ body>canvas {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-    /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
+  /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
   --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%));
   filter: var(--relief);
   user-select: none;
