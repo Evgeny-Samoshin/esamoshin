@@ -43,6 +43,12 @@
   box-sizing: border-box;
 }
 
+/* [hidden] в браузерном стиле — это display:none, и любое авторское display его перебивает
+   (так фильтр примеров ставил hidden, а карточки оставались на экране). Закрываем раз и навсегда. */
+[hidden] {
+  display: none !important;
+}
+
 /* Контент-страницы прокручиваются; погружение (data-page=home) — фиксировано на весь вьюпорт. */
 html {
   height: auto;
@@ -93,10 +99,9 @@ html {
 }
 
 :focus-visible {
-  outline: none;
-  /* outline: 2px solid var(--sky-deep);
+  outline: 2px solid var(--sky-deep);
   outline-offset: 3px;
-  border-radius: 2px; */
+  border-radius: 2px;
 }
 
 /* ═══════════════ фон-заглушка ═══════════════ */
@@ -135,46 +140,18 @@ body>canvas {
   display: contents;
 }
 
-/* ═══════════════ сцена и экраны ═══════════════ */
+/* ═══════════════ главный экран ═══════════════ */
+/* Единственный экран на весь вьюпорт. Переключение страниц — забота роутера. */
 .stage {
   position: fixed;
   inset: 0;
   z-index: 1;
-  perspective: 1200px;
 }
 
 .screen {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  transform-origin: 50% 46%;
-  will-change: transform, opacity, filter;
-}
-
-.screen[hidden] {
-  display: none;
-}
-
-.screen.is-leaving {
-  pointer-events: none;
-}
-
-.pane {
-  height: 100%;
-  padding: calc(var(--safe-t) + 40px) var(--pad) calc(var(--safe-b) + 40px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  /* отдача на скролл за край: без неё жест не нащупывается */
-  transform: translateY(var(--pull, 0px));
-}
-
-.pane--center {
-  justify-content: center;
-  align-items: flex-start;
-  max-width: 1100px;
-  margin: 0 auto;
-  gap: 26px;
 }
 
 /* ═══════════════ типографика ═══════════════ */
@@ -403,37 +380,52 @@ body>canvas {
   animation: rise-in 620ms var(--ease-dive) 1080ms backwards;
 }
 
-/* ═══════════════ БРИФ ═══════════════ */
-.screen--brief {
-  background: var(--bg);
-}
-
-.brief-scroll {
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
+/* ═══════════════ БРИФ (отдельная страница) ═══════════════ */
 .brief {
   max-width: 720px;
-  margin: 0 auto;
-  padding: calc(var(--safe-t) + 20px) var(--pad) calc(var(--safe-b) + 60px);
-  /* отдача на потяг за верхний край: без неё жест не нащупывается */
-  transform: translateY(var(--pull, 0px));
+  padding-block: clamp(28px, 4vw, 48px) clamp(48px, 7vw, 88px);
 }
 
-/* Во время жеста transform идёт за пальцем без анимации — transition на постоянно
-   меняющемся значении и давал рывки. Пружина включается только на отпускании. */
-.brief.is-releasing,
-.pane.is-releasing {
-  transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+.brief .lede {
+  margin-top: 14px;
 }
 
-.brief-head {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.brief-h2 {
+  font: 500 clamp(17px, 2vw, 20px) var(--body);
+  letter-spacing: .02em;
+  margin: 2em 0 .8em;
+}
+
+.brief-steps {
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+
+.brief-steps li+li {
+  margin-top: .5em;
+}
+
+.brief-steps b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.brief-note {
+  margin-top: 1.2em;
+  color: var(--muted);
+}
+
+.brief-note a {
+  color: var(--sky-ink);
+}
+
+.brief-done {
+  padding-block: clamp(60px, 12vh, 140px) clamp(48px, 8vw, 96px);
+}
+
+.brief-done .lede {
+  margin-top: 12px;
 }
 
 .back {
@@ -627,7 +619,7 @@ body>canvas {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .form-error {
@@ -648,80 +640,9 @@ body>canvas {
   gap: 12px;
 }
 
-/* ═══════════════ СЛОИ: FAQ / ПОРТФОЛИО ═══════════════ */
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  width: 100%;
-  max-width: none;
-  max-height: none;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  color: var(--ink);
-  background: none;
-  display: grid;
-  place-items: start center;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  opacity: 0;
-  transition: opacity .4s var(--ease-soft);
-}
-
-.overlay:not([open]) {
-  display: none;
-}
-
-.overlay::backdrop {
-  background: rgba(28, 30, 34, .14);
-  backdrop-filter: blur(14px);
-  opacity: 0;
-  transition: opacity .4s var(--ease-soft);
-}
-
-.overlay.is-on,
-.overlay.is-on::backdrop {
-  opacity: 1;
-}
-
-.overlay-inner {
-  width: min(1040px, 100%);
-  padding: calc(var(--safe-t) + 20px) var(--pad) calc(var(--safe-b) + 60px);
-  transform: translateY(14px) scale(.985);
-  transition: transform .45s var(--ease-dive);
-}
-
-.overlay.is-on .overlay-inner {
-  transform: none;
-}
-
-.overlay-close {
-  position: sticky;
-  top: 0;
-  float: right;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: rgba(242, 243, 245, .9);
-  font-size: 22px;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  transition: border-color .3s, color .3s;
-}
-
-.overlay-close:hover {
-  border-color: var(--sky);
-  color: var(--ink);
-}
-
+/* ═══════════════ ВОПРОСЫ (аккордеон) ═══════════════ */
 .faq {
   margin-top: 34px;
-  columns: 2;
-  column-gap: clamp(24px, 3vw, 56px);
 }
 
 .qa {
@@ -829,62 +750,6 @@ body>canvas {
   }
 }
 
-/* Возврат — не реверс погружения: без дыма и блюра, короткий отход назад-вниз.
-   Отмотка плёнки выглядит дёшево, шаг назад — нет. */
-@keyframes back-out {
-  from {
-    transform: none;
-    opacity: 1;
-  }
-
-  to {
-    transform: translateY(3%) scale(.96);
-    opacity: 0;
-  }
-}
-
-@keyframes back-in {
-  from {
-    transform: translateY(-2%) scale(1.04);
-    opacity: 0;
-  }
-
-  to {
-    transform: none;
-    opacity: 1;
-  }
-}
-
-@keyframes plain-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.screen[data-anim="dive-out"] {
-  animation: dive-out var(--t-dive) var(--ease-dive) forwards;
-}
-
-.screen[data-anim="dive-in"] {
-  animation: dive-in var(--t-dive) var(--ease-dive) 90ms backwards;
-}
-
-.screen[data-anim="back-out"] {
-  animation: back-out var(--t-back) var(--ease-dive) forwards;
-}
-
-.screen[data-anim="back-in"] {
-  animation: back-in var(--t-back) var(--ease-dive) 60ms backwards;
-}
-
-.screen[data-anim="plain-in"] {
-  animation: plain-in 380ms var(--ease-soft);
-}
-
 /* ═══════════════ адаптив ═══════════════ */
 @media (max-width: 720px) {
   .logo {
@@ -897,24 +762,15 @@ body>canvas {
     align-items: stretch;
   }
 
-  .faq {
-    columns: 1;
-  }
-
-  .pane--center {
-    justify-content: safe center;
-    padding-top: calc(var(--safe-t) + 64px);
-    padding-bottom: calc(var(--safe-b) + 66px);
-    overflow-y: auto;
+  /* Пять пунктов меню в строку с логотипом не помещаются — кладём их под него. */
+  .site-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }
 
 @media (max-height: 560px) and (orientation: landscape) {
-  .pane--center {
-    justify-content: flex-start;
-    overflow-y: auto;
-  }
-
   .logo {
     font-size: 13vw;
   }
@@ -923,13 +779,10 @@ body>canvas {
 /* ═══════════════ reduced motion ═══════════════ */
 @media (prefers-reduced-motion: reduce) {
 
-  .screen[data-anim] {
-    animation: plain-in 200ms linear !important;
-  }
-
   .screen--start.is-active .logo,
   .screen--start.is-active .logo-sub,
-  .screen--start.is-active .start-actions {
+  .screen--start.is-active .start-actions,
+  .screen--start.is-active .start-doors {
     animation: none;
   }
 

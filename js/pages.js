@@ -2,87 +2,30 @@
    SAMOSHIN — поведение страниц.
    Роутер (nav.js) вызывает PAGES[data-page](root) при входе на страницу;
    возвращённая функция — teardown, вызывается при уходе.
-   Историей владеет роутер — здесь её не трогаем.
+   Переходы между страницами и история — забота роутера, здесь их нет.
    ═══════════════════════════════════════════════ */
 'use strict';
 
 window.PAGES = (function () {
-  const $  = (s, r = document) => r.querySelector(s);
+  const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
   const CONFIG = { email: 'hello@samoshin.ru' };
 
-  /* ───────── Погружение (главная): старт ↔ бриф ↔ подтверждение ───────── */
-  function initHome(root) {
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    const DUR = { dive: 790, back: 520, none: 0 };
-    const scr = (n) => $('#s-' + n, root);
-    let screen = 'start';
-    let finish = null;               // не null, пока идёт переход между экранами
+  /* Главная и «Вопросы» поведения не требуют: там только разметка и ссылки —
+     роутер просто ничего не вызывает для их data-page. */
 
-    function show(next, mode) {
-      if (finish) finish();          // новый переход обрывает текущий
-      if (next === screen) return;
-      const to = scr(next); if (!to) return;
-      const from = scr(screen);
-      from.classList.remove('is-first');
-      screen = next;
-      if (reduced.matches) mode = 'none';
-
-      const pair = { dive: ['dive-out', 'dive-in'], back: ['back-out', 'back-in'] }[mode];
-      to.hidden = false; to.classList.add('is-active');
-      if (pair) { from.dataset.anim = pair[0]; to.dataset.anim = pair[1]; }
-      else to.dataset.anim = 'plain-in';
-      from.classList.add('is-leaving');
-
-      const t = setTimeout(() => finish && finish(), DUR[mode] ?? 200);
-      finish = () => {
-        clearTimeout(t); finish = null;
-        from.classList.remove('is-leaving');
-        delete from.dataset.anim; delete to.dataset.anim;
-        from.hidden = true; from.classList.remove('is-active');
-        const h = to.querySelector('h1, h2') || to;
-        h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true });
-        if (to.dataset.screen === 'brief') $('#brief-scroll', root).scrollTop = 0;
-      };
-    }
-
-    function back() { if (screen !== 'start') { overscroll.drop(); show('start', 'back'); } }
-
-    /* ── FAQ-слой (dialog) ── */
-    const faq = $('#ov-faq', root);
-    let faqOpen = false;
-    const openFaq  = () => { faqOpen = true; faq.showModal(); requestAnimationFrame(() => faq.classList.add('is-on')); };
-    const closeFaq = () => { if (!faqOpen) return; faqOpen = false; faq.classList.remove('is-on'); setTimeout(() => faq.close(), 400); };
-    const onCancel = (e) => { e.preventDefault(); closeFaq(); };
-    faq.addEventListener('cancel', onCancel);
-
-    /* ── Клики внутри погружения (кнопки; ссылки берёт роутер) ── */
-    const onClick = (e) => {
-      const go = e.target.closest('[data-go]');
-      if (go) return void show(go.dataset.go, go.dataset.go === 'brief' ? 'dive' : 'back');
-      if (e.target.closest('[data-back]')) return void back();
-      if (e.target.closest('#faq-open')) return void openFaq();
-      if (e.target.closest('[data-close-overlay]')) return void closeFaq();
-      if (faqOpen && !e.target.closest('.overlay-inner')) closeFaq();
-    };
-    root.addEventListener('click', onClick);
-
-    /* ── Скролл за верхний край брифа → назад на старт ── */
-    const screenEl = () => scr(screen);
-    const overscroll = createOverscrollNav({
-      scrollBox: () => screenEl().querySelector('.brief-scroll, .pane'),
-      pullEl:    () => screenEl().querySelector('.brief, .pane'),
-      active:    () => screen !== 'start' && !faqOpen,
-      busy:      () => !!finish,
-      canGo:     (dir) => dir < 0 && screen === 'brief',
-      onCommit:  (dir) => { if (dir < 0) back(); },
-    });
-
-    /* ── Бриф: сохранение, валидация, документ, отправка ── */
+  /* ───────── Бриф: черновик, валидация, документ, отправка ───────── */
+  function initBrief(root) {
     const form = $('#brief-form', root);
     const STORE = 'samoshin-brief';
     const WEEK = 7 * 24 * 3600 * 1000;
+
+    /* Назад — туда, откуда пришли. Прямой заход (истории нет) — на главную. */
+    $('#brief-back', root).addEventListener('click', () => {
+      if (history.length > 1) history.back();
+      else location.href = 'index.html';
+    });
 
     const LABELS = {
       business: 'Чем занимается бизнес', clients: 'Кто клиенты',
@@ -179,19 +122,21 @@ window.PAGES = (function () {
 
     let lastBrief = null;
 
-    const onChange = (e) => {
+    form.addEventListener('change', (e) => {
       const group = e.target.closest('.step');
       const ownBox = group?.querySelector('.opt--own input');
       const ownInput = group?.querySelector('.own-input');
       if (ownBox && ownInput) { ownInput.hidden = !ownBox.checked; if (e.target.closest('.opt--own')) ownInput.focus(); }
       save();
-    };
-    const onInput = (e) => {
+    });
+
+    form.addEventListener('input', (e) => {
       save();
       const step = e.target.closest('.step.is-bad');
       if (step && !REQUIRED.some(k => $(`[name="${k}"]`, step) && answers()[k].length === 0)) clearBad(step);
-    };
-    const onSubmit = (e) => {
+    });
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
       const a = answers();
       if (!validate(a)) return;
@@ -201,19 +146,16 @@ window.PAGES = (function () {
       // ponytail: mailto — почтовый клиент клиента. Нужна отправка без него — Formspree/Web3Forms сюда же.
       location.href = mailtoLink(a);
       try { localStorage.removeItem(STORE); } catch { /* приватный режим */ }
-      show('brief-done', 'none');
-    };
-    form.addEventListener('change', onChange);
-    form.addEventListener('input', onInput);
-    form.addEventListener('submit', onSubmit);
+      // «Получено» — состояние этой же страницы: отдельный URL финальному экрану не нужен.
+      $('#brief-main', root).hidden = true;
+      $('#brief-done', root).hidden = false;
+      window.scrollTo(0, 0);
+    });
+
     $('#done-download', root).addEventListener('click', () => lastBrief && downloadDoc(lastBrief));
 
     restore();
     selftest(form, { validate, answers, toDoc, mailtoLink, CONFIG });
-
-    // teardown: снять то, что вне root (overscroll висит на window). Слушатели на root/form
-    // уходят с самим узлом при подмене #page.
-    return () => { overscroll.destroy(); if (finish) finish(); };
   }
 
   /* ───────── Примеры работ: фильтр по типу ───────── */
@@ -230,7 +172,7 @@ window.PAGES = (function () {
     apply(['landing', 'card', 'corp', 'shop'].includes(f) ? f : 'all');
   }
 
-  /* ───────── Самопроверка логики брифа: /?selftest ───────── */
+  /* ───────── Самопроверка логики брифа: /brief.html?selftest ───────── */
   function selftest(form, api) {
     if (!location.search.includes('selftest')) return;
     const $f = (s) => form.querySelector(s);
@@ -257,5 +199,5 @@ window.PAGES = (function () {
     console.log('selftest: ok');
   }
 
-  return { home: initHome, works: initWorks };
+  return { brief: initBrief, works: initWorks };
 })();
