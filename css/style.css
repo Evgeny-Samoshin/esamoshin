@@ -193,7 +193,7 @@ body>canvas {
 /* ═══════════════ кнопки ═══════════════ */
 .btn {
   background: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 4px 30px rgba #0000001a (0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, .1);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -209,7 +209,11 @@ body>canvas {
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: border-color .3s, background .3s, color .3s, transform .3s var(--ease-soft);
+  /* box-shadow и text-shadow обязаны быть в базовом правиле, а не только в :hover.
+     Правило под курсором управляет лишь входом; выход анимирует базовое, и без них
+     свечение гасло рывком. По той же причине в :hover нет своего transition. */
+  transition: border-color .3s, background .3s, color .3s, box-shadow .3s, text-shadow .3s,
+    transform .3s var(--ease-soft);
 }
 
 .btn:hover {
@@ -218,8 +222,6 @@ body>canvas {
   transform: translateY(-1px);
   text-shadow: 0 0 18px var(--ink);
   box-shadow: 1px 1px 20px 1px #fff;
-  transform: translateY(-1px);
-  transition: 0.3s;
 }
 
 .btn:active {
@@ -241,7 +243,6 @@ body>canvas {
   color: #fff;
   text-shadow: 0 0 12px #ffffff;
   box-shadow: var(--ink) 1px 1px 20px 1px;
-  transition: 0.3s;
 }
 
 .btn--ghost {
