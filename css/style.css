@@ -22,13 +22,19 @@
   /* границы полей ввода и выбора — 3.0:1, WCAG 1.4.11 */
 
   --display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --body: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --body: "Ysabeau Infant", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --body-w: 400;
+  /* вес корпусного текста: единственная ручка настройки, вариативная ось 100..700 */
+
+  /* Вторая ступень шкалы (лид и подзаголовки). Наклон тот же, что у body в clamp ниже
+     (1.05vw), иначе кривые пересекаются и на мобильных лид становится мельче текста. */
+  --fs-2: clamp(17px, 1.05vw + 14px, 22px);
 
   --pad: clamp(20px, 5vw, 64px);
   --safe-t: max(var(--pad), env(safe-area-inset-top));
   --safe-b: max(var(--pad), env(safe-area-inset-bottom));
-  --maxw: 760px;
-  /* ширина колонки контент-страниц (обо мне, примеры, кейсы, блог) */
+  --maxw: 720px;
+  /* ширина колонки контент-страниц: 720 при 18px держит строку в 55–70 знаков (760 давало до 76) */
 
   /* тайминги: прямой ход уверенный, обратный быстрее */
   --t-dive: 700ms;
@@ -66,9 +72,8 @@ html[data-page="home"] {
 body {
   margin: 0;
   min-height: 100%;
-  font: 400 clamp(15px, 1.05vw + 12px, 18px)/1.6 var(--body);
+  font: var(--body-w) clamp(15px, 1.05vw + 12px, 18px)/1.6 var(--body);
   color: var(--ink);
-  -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
@@ -182,9 +187,9 @@ body>canvas {
 
 .lede {
   max-width: 56ch;
-  color: var(--muted);
-  font-weight: 300;
-  font-size: clamp(15px, .6vw + 13px, 19px);
+  color: var(--ink);
+  font-weight: 400;
+  font-size: var(--fs-2);
 }
 
 /* ═══════════════ кнопки ═══════════════ */
@@ -401,7 +406,7 @@ body>canvas {
 }
 
 .brief-h2 {
-  font: 500 clamp(17px, 2vw, 20px) var(--body);
+  font: 500 var(--fs-2)/1.3 var(--body);
   letter-spacing: .02em;
   margin: 2em 0 .8em;
 }
@@ -665,7 +670,7 @@ body>canvas {
 .qa summary {
   cursor: pointer;
   list-style: none;
-  font-size: 16px;
+  font-size: var(--fs-2);
   font-weight: 500;
   display: flex;
   gap: 14px;
@@ -698,7 +703,7 @@ body>canvas {
   margin-top: 12px;
   color: var(--muted);
   font-weight: 300;
-  font-size: 15px;
+  /* размер — от body: 15px давал 6% разрыв с вопросом на мобильных */
 }
 
 .filters {
@@ -909,11 +914,21 @@ body>canvas {
   margin-top: .4em;
 }
 
+/* Корпусный абзац раздела — второстепенный тон, --ink остаётся за заголовками.
+   Ставится явно: селектор по тегу цеплял бы и абзацы внутри карточек. Ряд: .eyebrow → .lede → .copy. */
+.copy {
+  color: var(--muted);
+  font-weight: 300;
+}
+
 /* Полоса CTA */
 .cta {
+  display: flex;
   text-align: center;
   padding: clamp(48px, 8vw, 96px) var(--pad);
   border-top: 1px solid var(--line);
+  flex-direction: column;
+  align-items: center;
 }
 
 .cta .display {
@@ -1018,7 +1033,7 @@ body>canvas {
 
 /* Обо мне: шесть фаз */
 .phases-h {
-  font: 500 clamp(17px, 2vw, 20px) var(--body);
+  font: 500 var(--fs-2)/1.3 var(--body);
   letter-spacing: .02em;
   margin-top: 1.6em;
 }
@@ -1044,7 +1059,7 @@ body>canvas {
 }
 
 .ph h4 {
-  font: 500 clamp(17px, 2vw, 20px) var(--body);
+  font: 500 var(--fs-2)/1.3 var(--body);
   margin: 0 0 .3em;
 }
 
@@ -1056,7 +1071,8 @@ body>canvas {
 .ph .got {
   margin-top: .4em;
   color: var(--ink);
-  font-size: 15px;
+  font-size: 14px;
+  /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
 }
 
 .ph .got b {
@@ -1064,7 +1080,8 @@ body>canvas {
 }
 
 .phase-tag {
-  font-size: .62em;
+  font-size: 11px;
+  /* абсолютный, не em: от заклампленного родителя .62em давало 10.5px на мобильных */
   color: var(--muted);
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -1077,7 +1094,7 @@ body>canvas {
 }
 
 .types dt {
-  font: 500 clamp(16px, 1.6vw, 18px) var(--body);
+  font: 500 var(--fs-2)/1.3 var(--body);
   margin-top: 1.2em;
 }
 
