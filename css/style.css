@@ -40,11 +40,53 @@
   --fs-6: 54px;
   --fs-7: 67px;
 
-  --pad: clamp(20px, 5vw, 64px);
+  /* ───── Шкала отступов ─────
+     Верх шкалы (28 / 42 / 56 / 84 / 112) кратен строке корпуса: 17.5 × 1.6 = 28px.
+     Крупные интервалы садятся на текстовый ритм.
+     Низ (8 / 14 / 22) подобран под задачи, а не выведен формулой: это плотные
+     интервалы внутри контролов, где ритм строки уже не читается, а читается
+     привычный шаг. Значения взяты те, что уже стояли в файле.
+
+     Формулы для продолжения шкалы НЕТ и не должно быть. Нужного нет —
+     берёшь соседнее. Лишние 2px не заметит никто, девятую ступень заметят все. */
+  --sp-0: 8px;
+  /* внутри строки: иконка↔текст, радио↔подпись */
+  --sp-1: 14px;
+  /* внутри группы: поле↔поле, подпись↔контрол */
+  --sp-2: 22px;
+  /* заголовок → его первый абзац, группа↔группа */
+  --sp-3: 28px;
+  /* абзац↔абзац, блок↔блок */
+  --sp-4: 42px;
+  /* текст → следующий заголовок */
+  --sp-5: 56px;
+  /* крупные блоки внутри секции */
+  --sp-6: 84px;
+  /* запас: секция↔секция без полей */
+  --sp-7: 112px;
+  /* поля секции на десктопе */
+
+  /* Текучие. Обе границы clamp — ступени шкалы, как в шкале кегля:
+     на любой ширине значение попадает в шкалу, а не между ступенями. */
+  --sp-section: clamp(56px, 4vw, 112px);
+  /* вертикальные поля секций: --sp-5 → --sp-7.
+     4vw достаёт до нижней границы только на 1400px, поэтому до широких мониторов
+     это фактически фиксированные 56px, а рост начинается за 1400px. */
+  --sp-flow: clamp(28px, 4vw, 56px);
+  /* крупное внутри секции: --sp-3 → --sp-5 */
+  --sp-vh: clamp(28px, 6vh, 56px);
+  /* то же, но по высоте — погружение фиксировано на 100vh, там тесно по вертикали */
+
+  /* Не ритм: эти числа заданы физикой, а не сеткой, и в шкалу не входят. */
+  --tap: 44px;
+  /* минимальная сенсорная область, WCAG 2.5.8 (целевой AAA) */
+  --measure: 600px;
+  /* ширина текстовой колонки: 68 знаков при 17.5px — замерено, зона комфорта 55–75 */
+
+  --pad: clamp(21px, 5vw, 56px);
+  /* боковое поле экрана: --sp-2 → --sp-5 */
   --safe-t: max(var(--pad), env(safe-area-inset-top));
   --safe-b: max(var(--pad), env(safe-area-inset-bottom));
-  --maxw: 720px;
-  /* ширина колонки контент-страниц (обо мне, примеры, кейсы, блог) */
 
   /* тайминги: прямой ход уверенный, обратный быстрее */
   --t-dive: 700ms;
@@ -87,19 +129,64 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1,
-h2,
-h3,
-p,
-figure,
-fieldset,
-legend {
+/* Сброс UA-маржинов. Список полный намеренно: раньше здесь не было dl/dd/ul/ol/h4,
+   и маржин dt протекал сквозь dl, съедая объявленный отступ (.types margin-top не работал).
+   Ресет обязан быть в :where() (вес 0): селектор по тегу весит (0,0,1) и
+   иначе перебивает примитив потока, который специально сделан нулевым. */
+:where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, fieldset, legend) {
   margin: 0;
   padding: 0;
 }
 
-fieldset {
+:where(fieldset) {
   border: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   ПРИМИТИВЫ. Всё остальное строится из этих трёх.
+   Базовые правила — в :where() (специфичность 0), поэтому медиазапрос
+   и любое правило-исключение выигрывают по весу, а не по номеру строки.
+   ═══════════════════════════════════════════════ */
+
+/* 1. Колонка. Единственный горизонтальный контейнер на сайте.
+      max-width считается ОТ --measure, поэтому ширина текста постоянна
+      и не сжимается, когда растёт --pad. */
+:where(.wrap) {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* 2. Поток. Отступ живёт на элементе, который его получает, и зовётся --flow.
+      display:grid — не ради колонок, а чтобы маржины детей не схлопывались
+      и не протекали сквозь контейнер. На любой разметке блога это будет
+      предсказуемо без BFC-хаков. .cta в список display не входит: у неё
+      своя flex-раскладка по центру, а маржины во flex тоже не схлопываются.
+      Новым страницам (кейсы, блог) достаточно class="flow". */
+:where(.flow, .prose, .brief, .brief-done) {
+  display: grid;
+}
+
+:where(.flow, .prose, .brief, .brief-done, .cta)>*+* {
+  margin-block-start: var(--flow, var(--sp-3));
+}
+
+:where(.flow, .prose, .brief, .brief-done, .cta)>:is(h2, h3) {
+  --flow: var(--sp-4);
+}
+
+:where(.flow, .prose, .brief, .brief-done, .cta)>:is(h1, h2, h3)+* {
+  --flow: var(--sp-2);
+}
+
+/* Ссылка «На главную» уже даёт воздух собственной высотой (--tap). */
+:where(.flow, .prose, .brief)>.back+:is(h1, h2) {
+  --flow: 0;
+}
+
+/* 3. Секция. Вертикальные поля всего сайта — одна ручка. */
+:where(.section) {
+  padding-block: var(--sp-section);
 }
 
 button {
@@ -170,7 +257,7 @@ body>canvas {
 }
 
 /* ═══════════════ типографика ═══════════════ */
-.display {
+:where(.display) {
   font-family: var(--display);
   font-weight: 300;
   font-size: var(--fs-7);
@@ -184,7 +271,6 @@ body>canvas {
 }
 
 .lede {
-  max-width: 56ch;
   color: var(--ink);
   font-weight: 400;
   font-size: var(--fs-2);
@@ -201,8 +287,9 @@ body>canvas {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 15px 30px;
+  gap: var(--sp-0);
+  /* 14 + строка 28 + 14 + рамка 2 = 58px по высоте, выше --tap (замерено) */
+  padding: var(--sp-1) var(--sp-3);
   border-radius: 999px;
   color: var(--btn-fg);
   font-size: var(--fs-1);
@@ -259,7 +346,7 @@ body>canvas {
 .btn--wide {
   width: 100%;
   max-width: 380px;
-  padding: 18px 30px;
+  padding: var(--sp-2) var(--sp-3);
 }
 
 /* ═══════════════ СТАРТ ═══════════════ */
@@ -278,13 +365,15 @@ body>canvas {
   text-align: center;
 }
 
-.logo {
+:where(.logo) {
   font-family: var(--display);
   font-weight: 300;
   font-size: 17.2vw;
   line-height: .92;
   white-space: nowrap;
   letter-spacing: .028em;
+  /* Не ритм, а оптика: гасим хвостовой трекинг, чтобы вордмарк встал по центру.
+     Значение обязано равняться letter-spacing выше, к шкале отступов отношения не имеет. */
   margin-inline: -.028em 0;
   /* Объём: имя будто вытиснено в перламутре. Градиент лепит форму — тёмная фаска сверху,
      тело буквы, лёгкая собственная тень, растворение в свету к низу (см. арт-дирекшн). */
@@ -298,19 +387,19 @@ body>canvas {
   user-select: none;
 }
 
-.logo-sub {
-  margin-top: 6px;
+:where(.logo-sub) {
+  margin-block-start: var(--sp-0);
   font-size: var(--fs-1);
   letter-spacing: .34em;
   text-transform: uppercase;
   color: #1c1e228a;
 }
 
-.start-actions {
-  margin-top: clamp(34px, 6vh, 64px);
+:where(.start-actions) {
+  margin-block-start: var(--sp-vh);
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: var(--sp-2);
   justify-content: center;
 }
 
@@ -358,10 +447,10 @@ body>canvas {
 
 /* Тонкие двери: тихий ряд ссылок под кнопками. Появляются последними, шёпотом. */
 .start-doors {
-  margin-top: clamp(22px, 4vh, 40px);
+  margin-block-start: var(--sp-3);
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--sp-1);
   justify-content: center;
   align-items: baseline;
 }
@@ -398,28 +487,21 @@ body>canvas {
 
 /* ═══════════════ БРИФ (отдельная страница) ═══════════════ */
 .brief {
-  max-width: 720px;
-  padding-block: clamp(28px, 4vw, 48px) clamp(48px, 7vw, 88px);
-}
-
-.brief .lede {
-  margin-top: 14px;
+  padding-block: var(--sp-flow) var(--sp-section);
 }
 
 .brief-h2 {
   font: 500 var(--fs-2)/1.3 var(--body);
   letter-spacing: .02em;
-  margin: 2em 0 .8em;
 }
 
 .brief-steps {
-  margin: 0;
-  padding-left: 1.2em;
+  padding-inline-start: var(--sp-2);
   color: var(--muted);
 }
 
 .brief-steps li+li {
-  margin-top: .5em;
+  margin-block-start: var(--sp-0);
 }
 
 .brief-steps b {
@@ -428,7 +510,6 @@ body>canvas {
 }
 
 .brief-note {
-  margin-top: 1.2em;
   color: var(--muted);
 }
 
@@ -437,23 +518,19 @@ body>canvas {
 }
 
 .brief-done {
-  padding-block: clamp(60px, 12vh, 140px) clamp(48px, 8vw, 96px);
-}
-
-.brief-done .lede {
-  margin-top: 12px;
+  padding-block: var(--sp-7) var(--sp-section);
 }
 
 .back {
-  align-self: flex-start;
   width: fit-content;
-  /* заголовки экранов — не flex, иначе кнопка растянется на всю ширину */
+  /* контейнер — grid, иначе кнопка растянулась бы на всю колонку */
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--tap);
   border: 0;
   background: none;
-  padding: 6px 12px 6px 0;
+  padding-block: var(--sp-0);
+  padding-inline: 0 var(--sp-1);
   color: var(--muted);
   font-size: var(--fs-0);
   text-decoration: none;
@@ -467,27 +544,31 @@ body>canvas {
 }
 
 .form {
-  margin-top: clamp(32px, 6vh, 56px);
+  /* форма — крупный блок, а не первый абзац под заголовком */
+  --flow: var(--sp-4);
   display: flex;
   flex-direction: column;
-  gap: 46px;
+  gap: var(--sp-4);
 }
 
 .step {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  scroll-margin-top: 24px;
+  gap: var(--sp-1);
+  scroll-margin-block-start: var(--sp-2);
 }
 
-.step legend {
+/* <legend> не является элементом flex/grid-контейнера — gap на него не действует
+   (заголовок шага стоял в 0px от первого вопроса при 14px между вопросами).
+   Единственный способ отодвинуть его — собственный маржин. */
+:where(.step legend) {
   display: flex;
   align-items: baseline;
-  gap: 14px;
+  gap: var(--sp-1);
   font-family: var(--display);
   font-weight: 400;
   font-size: var(--fs-3);
-  padding-bottom: 4px;
+  margin-block-end: var(--sp-1);
 }
 
 .step-n {
@@ -505,7 +586,7 @@ body>canvas {
 }
 
 .q--gap {
-  margin-top: 14px;
+  margin-block-start: var(--sp-1);
 }
 
 .q-note {
@@ -521,7 +602,7 @@ body>canvas {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-0);
 }
 
 /* у полей ввода рамка — единственный признак контрола, поэтому она контрастнее
@@ -530,7 +611,7 @@ body>canvas {
 .field textarea,
 .own-input {
   width: 100%;
-  padding: 13px 16px;
+  padding: var(--sp-1) var(--sp-2);
   border: 1px solid var(--line-ui);
   border-radius: 2px;
   background: rgba(255, 255, 255, .6);
@@ -559,7 +640,7 @@ body>canvas {
 .opts {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--sp-0);
 }
 
 .opts--grid {
@@ -570,8 +651,8 @@ body>canvas {
 .opt {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
   border: 1px solid var(--line);
   border-radius: 2px;
   background: rgba(255, 255, 255, .45);
@@ -599,7 +680,7 @@ body>canvas {
 }
 
 .own-input {
-  margin-top: 2px;
+  margin-block-start: var(--sp-0);
 }
 
 .step.is-bad legend {
@@ -636,7 +717,7 @@ body>canvas {
 .form-foot {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--sp-1);
   align-items: center;
 }
 
@@ -655,19 +736,14 @@ body>canvas {
 .done-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--sp-1);
 }
 
 /* ═══════════════ ВОПРОСЫ (аккордеон) ═══════════════ */
-.faq {
-  margin-top: 34px;
-}
-
 .qa {
   break-inside: avoid;
-  margin-bottom: 2px;
   border-bottom: 1px solid var(--line);
-  padding: 16px 0;
+  padding-block: var(--sp-2);
 }
 
 .qa summary {
@@ -676,7 +752,7 @@ body>canvas {
   font-size: var(--fs-2);
   font-weight: 500;
   display: flex;
-  gap: 14px;
+  gap: var(--sp-1);
   justify-content: space-between;
   transition: color .25s;
 }
@@ -703,22 +779,21 @@ body>canvas {
 }
 
 .qa p {
-  margin-top: 12px;
+  margin-block-start: var(--sp-1);
   color: var(--muted);
   font-weight: 300;
   /* размер — от body: 15px давал 6% разрыв с вопросом на мобильных */
 }
 
 .filters {
-  margin-top: 30px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--sp-0);
 }
 
 .filter {
-  min-height: 44px;
-  padding: 8px 18px;
+  min-height: var(--tap);
+  padding: var(--sp-0) var(--sp-2);
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, .5);
@@ -780,11 +855,13 @@ body>canvas {
     align-items: stretch;
   }
 
-  /* Пять пунктов меню в строку с логотипом не помещаются — кладём их под него. */
+  /* Пять пунктов меню в строку с логотипом не помещаются — кладём их под него.
+     Базовое правило .site-head лежит ниже по файлу, но оно в :where() —
+     поэтому здесь выигрывает вес, а не порядок строк. */
   .site-head {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: var(--sp-1);
   }
 }
 
@@ -836,28 +913,26 @@ body>canvas {
   z-index: 1;
 }
 
-.wrap {
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding-inline: var(--pad);
-}
-
 /* :not(.back) — «На главную» держит свой приглушённый тон из .back, а не акцентный цвет ссылок в тексте. */
 .prose a:not(.back) {
   color: var(--sky-ink);
 }
 
-/* Шапка */
-.site-head {
+/* Шапка. Та же колонка, что у контента: логотип, h1 и подвал стоят на одной
+   вертикали (было три разные оси — 64 / 344 / 280 на 1280px). */
+:where(.site-head) {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: clamp(16px, 3vw, 28px) var(--pad);
+  gap: var(--sp-1);
+  padding-block: var(--sp-2);
   border-bottom: 1px solid var(--line);
 }
 
-.site-logo {
+:where(.site-logo) {
   font-family: var(--display);
   font-weight: 400;
   font-size: var(--fs-3);
@@ -869,8 +944,9 @@ body>canvas {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(12px, 2vw, 22px);
+  /* без justify-content: на десктопе меню и так прижато справа (space-between),
+     а на мобильных оно встаёт по левому краю — на одну ось с логотипом. */
+  gap: var(--sp-2);
 }
 
 .site-nav a {
@@ -888,11 +964,11 @@ body>canvas {
 }
 
 /* Заголовки контент-страниц (размеры; базовый .display и .display em — из immersion) */
-.doc h1.display {
+:where(.doc h1.display) {
   font-size: var(--fs-6);
 }
 
-.doc h2.display {
+:where(.doc h2.display) {
   font-size: var(--fs-4);
 }
 
@@ -901,29 +977,15 @@ body>canvas {
 }
 
 .prose {
-  padding-block: clamp(40px, 7vw, 88px);
-}
-
-.prose>*+* {
-  margin-top: 1.1em;
-}
-
-/* 1.1em считается от кегля h1 (54px) и отрывал бы ссылку от заголовка.
-   Воздух даёт сам .back: min-height 44px + нижний паддинг. */
-.prose>.back+h1 {
-  margin-top: 0;
-}
-
-.prose h2 {
-  margin-top: 1.6em;
+  padding-block: var(--sp-section);
 }
 
 .prose ul {
-  padding-left: 1.2em;
+  padding-inline-start: var(--sp-2);
 }
 
 .prose li+li {
-  margin-top: .4em;
+  margin-block-start: var(--sp-0);
 }
 
 /* Корпусный абзац раздела — второстепенный тон, --ink остаётся за заголовками.
@@ -937,14 +999,10 @@ body>canvas {
 .cta {
   display: flex;
   text-align: center;
-  padding: clamp(48px, 8vw, 96px) var(--pad);
+  padding-block: var(--sp-section);
   border-top: 1px solid var(--line);
   flex-direction: column;
   align-items: center;
-}
-
-.cta .display {
-  margin-bottom: .6em;
 }
 
 /* Портрет (обо мне) */
@@ -958,19 +1016,21 @@ body>canvas {
 }
 
 /* Подвал: перелинковка + соцсети */
+/* Подвал — та же колонка, что шапка и контент (см. .site-head). */
 .site-foot {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
   border-top: 1px solid var(--line);
-  padding: clamp(36px, 6vw, 64px) var(--pad) clamp(28px, 4vw, 44px);
+  padding-block: var(--sp-flow) var(--sp-3);
   color: var(--muted);
   font-size: var(--fs-0);
 }
 
 .foot-cols {
-  max-width: var(--maxw);
-  margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: clamp(20px, 4vw, 40px);
+  gap: var(--sp-3);
 }
 
 .foot-cols h3 {
@@ -978,14 +1038,15 @@ body>canvas {
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--ink);
-  margin: 0 0 12px;
+  margin-block-end: var(--sp-1);
 }
 
 .foot-cols a {
   color: var(--muted);
   text-decoration: none;
   display: block;
-  padding: 3px 0;
+  /* 22.4 строки + 2×8 = 38.4px по высоте — выше минимума 2.5.8, ближе к --tap */
+  padding-block: var(--sp-0);
 }
 
 .foot-cols a:hover {
@@ -993,9 +1054,8 @@ body>canvas {
 }
 
 .foot-note {
-  max-width: var(--maxw);
-  margin: clamp(24px, 4vw, 40px) auto 0;
-  padding-top: 16px;
+  margin-block-start: var(--sp-3);
+  padding-block-start: var(--sp-2);
   border-top: 1px solid var(--line);
   font-size: var(--fs-0);
 }
@@ -1004,7 +1064,7 @@ body>canvas {
 .cases {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: clamp(20px, 3vw, 32px);
+  gap: var(--sp-3);
 }
 
 .case {
@@ -1017,18 +1077,18 @@ body>canvas {
   border-radius: 8px;
   border: 1px solid var(--line);
   background: linear-gradient(150deg, var(--logo-2), var(--logo));
-  margin-bottom: 14px;
+  margin-block-end: var(--sp-1);
 }
 
 .case-t {
   font: 500 var(--fs-2)/1.3 var(--body);
-  margin: 0 0 6px;
+  margin-block-end: var(--sp-0);
 }
 
 .case-b {
   color: var(--muted);
   font-size: var(--fs-1);
-  margin: 0 0 10px;
+  margin-block-end: var(--sp-1);
   flex: 1;
 }
 
@@ -1047,23 +1107,21 @@ body>canvas {
 .phases-h {
   font: 500 var(--fs-2)/1.3 var(--body);
   letter-spacing: .02em;
-  margin-top: 1.6em;
 }
 
 .phases {
-  margin-top: 1.2em;
   display: grid;
-  gap: clamp(22px, 3vw, 32px);
+  gap: var(--sp-3);
 }
 
 .ph {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: clamp(14px, 2vw, 20px);
+  gap: var(--sp-2);
   align-items: start;
 }
 
-.ph-n {
+:where(.ph-n) {
   font-family: var(--display);
   font-size: var(--fs-5);
   line-height: .9;
@@ -1072,16 +1130,15 @@ body>canvas {
 
 .ph h4 {
   font: 500 var(--fs-2)/1.3 var(--body);
-  margin: 0 0 .3em;
+  margin-block-end: var(--sp-0);
 }
 
 .ph p {
-  margin: 0;
   color: var(--muted);
 }
 
 .ph .got {
-  margin-top: .4em;
+  margin-block-start: var(--sp-0);
   color: var(--ink);
   font-size: var(--fs-0);
   /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
@@ -1100,18 +1157,24 @@ body>canvas {
   vertical-align: middle;
 }
 
-/* Обо мне: какие бывают сайты */
+/* Обо мне: какие бывают сайты.
+   grid — чтобы маржин первого dt не протекал наружу сквозь dl (раньше протекал
+   и съедал собственный отступ списка). */
 .types {
-  margin-top: 1em;
+  display: grid;
 }
 
 .types dt {
   font: 500 var(--fs-2)/1.3 var(--body);
-  margin-top: 1.2em;
+  margin-block-start: var(--sp-3);
+}
+
+.types dt:first-of-type {
+  margin-block-start: 0;
 }
 
 .types dd {
-  margin: .3em 0 0;
+  margin-block-start: var(--sp-0);
   color: var(--muted);
 }
 
@@ -1124,8 +1187,9 @@ body>canvas {
    Крупные уровни сдвигаются на ступень вниз целиком, а не интерполируются.
    clamp() держит шаг 1.25 только на концах диапазона: между ними размер уходит
    с шага (при 768px давал 46.08 и 30.72 — соотношение 1.5, а не 1.25).
-   Блок в конце файла намеренно: медиазапрос не добавляет специфичности,
-   а .doc h1.display выше по файлу весит (0,2,1) и иначе перебил бы правку.
+   Базовые правила (.display, .doc h1.display, .ph-n, .site-logo) обёрнуты
+   в :where() — их вес 0, поэтому эти переопределения выигрывают по
+   специфичности и от места блока в файле больше не зависят.
    ═══════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .display {
