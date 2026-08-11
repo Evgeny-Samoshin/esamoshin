@@ -1,5 +1,5 @@
 /* Фон-дым (Vanta.FOG) + курсорный след (FluidSmoke). Общий для всех страниц сайта.
-   Требует #smoke в DOM и загруженные three + vanta.fog + smoke.js ДО этого файла.
+   Требует #smoke в DOM и загруженные fog.js + smoke.js ДО этого файла.
    Уважает prefers-reduced-motion; ?nofog / ?notrail — выключатели для сравнения. */
 (function () {
   'use strict';
@@ -12,20 +12,14 @@
     if (!smokeEl) return;
 
     // Если эффект уже жив и контейнер всё ещё доступен — не пересоздаём его.
-    if (state.vantaEffect && state.vantaEffect.renderer && state.vantaEffect.renderer.domElement && state.vantaEffect.renderer.domElement.isConnected) {
+    if (state.fogEffect && state.fogEffect.canvas.isConnected) {
       return;
     }
 
     // Фон-туман. Не падаем, если библиотека/WebGL недоступны — остаётся CSS-градиент .smoke.
-    if (window.VANTA && !reduced && !location.search.includes('nofog') && !state.vantaEffect) {
+    if (window.FogBackground && !reduced && !location.search.includes('nofog') && !state.fogEffect) {
       try {
-        state.vantaEffect = VANTA.FOG({
-          el: '#smoke',
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.00,
-          minWidth: 200.00,
+        state.fogEffect = FogBackground.mount('#smoke', {
           highlightColor: 0x9d9c99,
           midtoneColor: 0xcacaca,
           lowlightColor: 0x5f5b70,

@@ -1,11 +1,14 @@
 {
   "version": "0.0.1",
+  "autoPort": true,
   "configurations": [
     {
       "name": "samoshin",
-      "runtimeExecutable": "sh",
-      "runtimeArgs": ["-c", "PORT=4173 python3 serve.py"],
-      "port": 4173
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "serve.py"
+      ],
+      "port": 4180
     }
   ]
 }
