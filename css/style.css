@@ -1157,10 +1157,6 @@ body>canvas {
   .step legend {
     font-size: var(--fs-3);
   }
-
-  .doc h1.display {
-    font-size: var(--fs-4);
-  }
 }
 
 /* Подпись под вордмарком набрана разрядкой .34em: на 17.5px строка выходит 290px
