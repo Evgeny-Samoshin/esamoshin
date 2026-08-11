@@ -84,6 +84,7 @@
 
     el.appendChild(canvas);
 
+    var lastW = 0, lastH = 0, lastRatio = 0;
     function resize() {
       // setSize + setPixelRatio из VantaBase/three: CSS-размер = размер контейнера,
       // буфер = размер × dpr / scale, а iResolution = размер / scale (БЕЗ dpr).
@@ -94,6 +95,10 @@
       var w = Math.max(el.offsetWidth, P.minWidth);
       var h = Math.max(el.offsetHeight, P.minHeight);
       var ratio = (devicePixelRatio || 1) / scale;
+      // Задание canvas.width чистит буфер даже если значение то же самое, а ResizeObserver
+      // срабатывает и без реальной смены размера. Тот же урок, что в smoke.js.
+      if (w === lastW && h === lastH && ratio === lastRatio) return;
+      lastW = w; lastH = h; lastRatio = ratio;
 
       canvas.style.width = w + 'px';
       canvas.style.height = h + 'px';
@@ -102,16 +107,21 @@
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uRes, w / scale, h / scale);
     }
-    resize();
     // ResizeObserver вместо window.resize: ловит и смену вьюпорта, и полосу прокрутки.
-    // Здесь это безопасно — у тумана нет состояния в буферах (в отличие от smoke.js).
-    var ro = new ResizeObserver(resize);
+    // Но сам ресайз делать в его колбэке НЕЛЬЗЯ: ResizeObserver доставляется ПОСЛЕ
+    // колбэков rAF и до paint, а задание canvas.width чистит буфер — то есть стёрло бы
+    // только что нарисованный кадр, и при протяжке рамки окна дым пропадал бы напрочь
+    // (у Vanta этого не было: событие resize приходит ДО rAF). Поэтому здесь только флаг,
+    // а ресайз — в начале frame(), вплотную перед отрисовкой.
+    var needResize = true;
+    var ro = new ResizeObserver(function () { needResize = true; });
     ro.observe(el);
 
     // animationLoop из VantaBase: время идёт в «кадрах при 60 fps», шаг зажат в [0.2, 5],
     // чтобы лаг или фоновая вкладка не телепортировали туман.
     var t = 0, prev = 0, req, tested = !location.search.includes('fogtest');
     function frame() {
+      if (needResize) { needResize = false; resize(); }
       var now = performance.now();
       if (prev) t += P.speed * Math.max(0.2, Math.min((now - prev) / (1000 / 60), 5));
       prev = now;
