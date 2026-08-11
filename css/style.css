@@ -26,15 +26,25 @@
   --body-w: 400;
   /* вес корпусного текста: единственная ручка настройки, вариативная ось 100..700 */
 
-  /* Вторая ступень шкалы (лид и подзаголовки). Наклон тот же, что у body в clamp ниже
-     (1.05vw), иначе кривые пересекаются и на мобильных лид становится мельче текста. */
-  --fs-2: clamp(17px, 1.05vw + 14px, 22px);
+  /* Модульная шкала: старт 14px, шаг 1.25. Значения округлены до 0.5px.
+     14 · 1.25 = 17.5 · 1.25 = 21.9 → 22 · 1.25 = 27.3 → 27 · 1.25 = 34.2 → 34 …
+     Нижние ступени фиксированы: 14px — пол, ниже него не опускаемся нигде.
+     Крупные заголовки текучие, но оба конца clamp — тоже ступени шкалы,
+     поэтому на любой ширине размер попадает в шкалу, а не между ступенями. */
+  --fs-0: 14px;
+  --fs-1: 17.5px;
+  --fs-2: 22px;
+  --fs-3: 27px;
+  --fs-4: 34px;
+  --fs-5: 43px;
+  --fs-6: 54px;
+  --fs-7: 67px;
 
   --pad: clamp(20px, 5vw, 64px);
   --safe-t: max(var(--pad), env(safe-area-inset-top));
   --safe-b: max(var(--pad), env(safe-area-inset-bottom));
   --maxw: 720px;
-  /* ширина колонки контент-страниц: 720 при 18px держит строку в 55–70 знаков (760 давало до 76) */
+  /* ширина колонки контент-страниц (обо мне, примеры, кейсы, блог) */
 
   /* тайминги: прямой ход уверенный, обратный быстрее */
   --t-dive: 700ms;
@@ -72,7 +82,7 @@ html[data-page="home"] {
 body {
   margin: 0;
   min-height: 100%;
-  font: var(--body-w) clamp(15px, 1.05vw + 12px, 18px)/1.6 var(--body);
+  font: var(--body-w) var(--fs-1)/1.6 var(--body);
   color: var(--ink);
   text-rendering: optimizeLegibility;
 }
@@ -163,26 +173,14 @@ body>canvas {
 .display {
   font-family: var(--display);
   font-weight: 300;
-  font-size: clamp(34px, 5.6vw, 74px);
+  font-size: var(--fs-7);
   line-height: 1.12;
   letter-spacing: -0.01em;
-}
-
-.display--sm {
-  font-size: clamp(28px, 3.6vw, 46px);
 }
 
 .display em,
 .logo-sub em {
   font-style: italic;
-}
-
-.eyebrow {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 .lede {
@@ -207,7 +205,7 @@ body>canvas {
   padding: 15px 30px;
   border-radius: 999px;
   color: var(--btn-fg);
-  font-size: 15px;
+  font-size: var(--fs-1);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -301,7 +299,7 @@ body>canvas {
 
 .logo-sub {
   margin-top: 6px;
-  font-size: clamp(12px, 1.1vw, 15px);
+  font-size: var(--fs-1);
   letter-spacing: .34em;
   text-transform: uppercase;
   color: #1c1e228a;
@@ -374,7 +372,9 @@ body>canvas {
   padding: 0;
   cursor: pointer;
   font: inherit;
-  font-size: clamp(12px, 1vw, 14px);
+  /* Ступень основного текста, а не подписи: на главном экране это единственная
+     навигация. Заодно даёт высоту строки 28px — WCAG 2.5.8 требует минимум 24. */
+  font-size: var(--fs-1);
   letter-spacing: .04em;
   color: var(--muted);
   text-decoration: none;
@@ -454,7 +454,9 @@ body>canvas {
   background: none;
   padding: 6px 12px 6px 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: var(--fs-0);
+  text-decoration: none;
+  /* на контент-страницах это <a href="index.html">, на брифе — <button> с history.back() */
   cursor: pointer;
   transition: color .3s;
 }
@@ -483,13 +485,13 @@ body>canvas {
   gap: 14px;
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(22px, 2vw, 28px);
+  font-size: var(--fs-3);
   padding-bottom: 4px;
 }
 
 .step-n {
   font-family: var(--body);
-  font-size: 11px;
+  font-size: var(--fs-0);
   font-weight: 500;
   letter-spacing: .16em;
   color: var(--sky-ink);
@@ -497,7 +499,7 @@ body>canvas {
 
 .q {
   display: block;
-  font-size: 15px;
+  font-size: var(--fs-1);
   font-weight: 500;
 }
 
@@ -506,7 +508,7 @@ body>canvas {
 }
 
 .q-note {
-  font-size: 13px;
+  font-size: var(--fs-0);
   color: var(--muted);
 }
 
@@ -532,7 +534,7 @@ body>canvas {
   border-radius: 2px;
   background: rgba(255, 255, 255, .6);
   font: inherit;
-  font-size: 15px;
+  font-size: var(--fs-1);
   color: var(--ink);
   resize: vertical;
   transition: border-color .25s, background .25s;
@@ -572,7 +574,7 @@ body>canvas {
   border: 1px solid var(--line);
   border-radius: 2px;
   background: rgba(255, 255, 255, .45);
-  font-size: 15px;
+  font-size: var(--fs-1);
   cursor: pointer;
   transition: border-color .25s, background .25s;
 }
@@ -639,11 +641,11 @@ body>canvas {
 
 .form-error {
   color: var(--sky-ink);
-  font-size: 14px;
+  font-size: var(--fs-0);
 }
 
 .form-note {
-  font-size: 13px;
+  font-size: var(--fs-0);
   color: var(--muted);
   max-width: 46ch;
   font-weight: 300;
@@ -686,7 +688,7 @@ body>canvas {
   content: "+";
   color: var(--sky-ink);
   font-family: var(--display);
-  font-size: 20px;
+  font-size: var(--fs-2);
   line-height: 1.2;
   flex: 0 0 auto;
 }
@@ -719,7 +721,7 @@ body>canvas {
   border: 1px solid var(--line);
   border-radius: 999px;
   background: rgba(255, 255, 255, .5);
-  font-size: 13px;
+  font-size: var(--fs-0);
   cursor: pointer;
   transition: border-color .25s, background .25s, color .25s;
 }
@@ -820,7 +822,7 @@ body>canvas {
 /* ═══════════════════════════════════════════════
    КОНТЕНТ-СТРАНИЦЫ (обо мне, примеры работ, кейсы, блог)
    Обёртка #page с классом .doc. Скролл-поток задаёт html (см. верх файла).
-   Общие .btn/.display/.eyebrow/.lede/.filter — из immersion выше (приоритет style.css).
+   Общие .btn/.display/.lede/.filter — из immersion выше (приоритет style.css).
    Здесь — только структура и то, чего в immersion нет.
    ═══════════════════════════════════════════════ */
 
@@ -839,7 +841,8 @@ body>canvas {
   padding-inline: var(--pad);
 }
 
-.prose a {
+/* :not(.back) — «На главную» держит свой приглушённый тон из .back, а не акцентный цвет ссылок в тексте. */
+.prose a:not(.back) {
   color: var(--sky-ink);
 }
 
@@ -856,7 +859,7 @@ body>canvas {
 .site-logo {
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(20px, 3vw, 26px);
+  font-size: var(--fs-3);
   letter-spacing: .06em;
   color: var(--ink);
   text-decoration: none;
@@ -865,13 +868,15 @@ body>canvas {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: clamp(12px, 2vw, 22px);
 }
 
 .site-nav a {
   color: var(--muted);
   text-decoration: none;
-  font-size: clamp(13px, 1vw, 15px);
+  /* см. .door: 14px давало высоту 22.4px, ниже минимума WCAG 2.5.8 */
+  font-size: var(--fs-1);
   letter-spacing: .02em;
   transition: color 160ms ease;
 }
@@ -883,11 +888,11 @@ body>canvas {
 
 /* Заголовки контент-страниц (размеры; базовый .display и .display em — из immersion) */
 .doc h1.display {
-  font-size: clamp(34px, 6vw, 58px);
+  font-size: var(--fs-6);
 }
 
 .doc h2.display {
-  font-size: clamp(26px, 4vw, 38px);
+  font-size: var(--fs-4);
 }
 
 .doc .display em {
@@ -900,6 +905,12 @@ body>canvas {
 
 .prose>*+* {
   margin-top: 1.1em;
+}
+
+/* 1.1em считается от кегля h1 (54px) и отрывал бы ссылку от заголовка.
+   Воздух даёт сам .back: min-height 44px + нижний паддинг. */
+.prose>.back+h1 {
+  margin-top: 0;
 }
 
 .prose h2 {
@@ -915,7 +926,7 @@ body>canvas {
 }
 
 /* Корпусный абзац раздела — второстепенный тон, --ink остаётся за заголовками.
-   Ставится явно: селектор по тегу цеплял бы и абзацы внутри карточек. Ряд: .eyebrow → .lede → .copy. */
+   Ставится явно: селектор по тегу цеплял бы и абзацы внутри карточек. Ряд: .lede → .copy. */
 .copy {
   color: var(--muted);
   font-weight: 300;
@@ -950,7 +961,7 @@ body>canvas {
   border-top: 1px solid var(--line);
   padding: clamp(36px, 6vw, 64px) var(--pad) clamp(28px, 4vw, 44px);
   color: var(--muted);
-  font-size: clamp(13px, 1vw, 15px);
+  font-size: var(--fs-0);
 }
 
 .foot-cols {
@@ -962,7 +973,7 @@ body>canvas {
 }
 
 .foot-cols h3 {
-  font: 500 13px/1 var(--body);
+  font: 500 var(--fs-0)/1 var(--body);
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--ink);
@@ -985,7 +996,7 @@ body>canvas {
   margin: clamp(24px, 4vw, 40px) auto 0;
   padding-top: 16px;
   border-top: 1px solid var(--line);
-  font-size: 13px;
+  font-size: var(--fs-0);
 }
 
 /* Примеры работ: сетка кейсов (фильтр .filters/.filter — из immersion выше) */
@@ -1009,19 +1020,19 @@ body>canvas {
 }
 
 .case-t {
-  font: 500 18px/1.3 var(--body);
+  font: 500 var(--fs-2)/1.3 var(--body);
   margin: 0 0 6px;
 }
 
 .case-b {
   color: var(--muted);
-  font-size: 15px;
+  font-size: var(--fs-1);
   margin: 0 0 10px;
   flex: 1;
 }
 
 .case-tag {
-  font-size: 13px;
+  font-size: var(--fs-0);
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--sky-ink);
@@ -1053,7 +1064,7 @@ body>canvas {
 
 .ph-n {
   font-family: var(--display);
-  font-size: clamp(30px, 4vw, 44px);
+  font-size: var(--fs-5);
   line-height: .9;
   color: var(--sky-ink);
 }
@@ -1071,7 +1082,7 @@ body>canvas {
 .ph .got {
   margin-top: .4em;
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--fs-0);
   /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
 }
 
@@ -1080,7 +1091,7 @@ body>canvas {
 }
 
 .phase-tag {
-  font-size: 11px;
+  font-size: var(--fs-0);
   /* абсолютный, не em: от заклампленного родителя .62em давало 10.5px на мобильных */
   color: var(--muted);
   letter-spacing: .06em;
@@ -1105,4 +1116,56 @@ body>canvas {
 
 .types dd a {
   white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   Шкала на узких экранах
+   Крупные уровни сдвигаются на ступень вниз целиком, а не интерполируются.
+   clamp() держит шаг 1.25 только на концах диапазона: между ними размер уходит
+   с шага (при 768px давал 46.08 и 30.72 — соотношение 1.5, а не 1.25).
+   Блок в конце файла намеренно: медиазапрос не добавляет специфичности,
+   а .doc h1.display выше по файлу весит (0,2,1) и иначе перебил бы правку.
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .display {
+    font-size: var(--fs-6);
+  }
+
+  .ph-n {
+    font-size: var(--fs-4);
+  }
+
+  .doc h1.display {
+    font-size: var(--fs-5);
+  }
+
+  .doc h2.display {
+    font-size: var(--fs-3);
+  }
+
+  .site-logo {
+    font-size: var(--fs-2);
+  }
+}
+
+@media (max-width: 560px) {
+  .display {
+    font-size: var(--fs-5);
+  }
+
+  .step legend {
+    font-size: var(--fs-3);
+  }
+
+  .doc h1.display {
+    font-size: var(--fs-4);
+  }
+}
+
+/* Подпись под вордмарком набрана разрядкой .34em: на 17.5px строка выходит 290px
+   и на узком экране рвётся на две. До 375px включительно держим ступень ниже. */
+@media (max-width: 375px) {
+  .logo-sub {
+    font-size: var(--fs-0);
+  }
 }
