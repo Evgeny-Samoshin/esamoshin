@@ -163,6 +163,16 @@ body {
       предсказуемо без BFC-хаков. .cta в список display не входит: у неё
       своя flex-раскладка по центру, а маржины во flex тоже не схлопываются.
       Новым страницам (кейсы, блог) достаточно class="flow". */
+
+/* --flow — обычное кастомное свойство, а значит наследуется. Без этого сброса
+   вложенный контейнер потока раздавал бы своим детям то значение, которое
+   досталось ему самому от родителя: секция после заголовка получает 22 — и все
+   абзацы внутри неё тоже получали 22 вместо 28 (проверено замером).
+   `initial` возвращает свойство в невалидное состояние, и var() берёт запасное. */
+:where(.flow, .prose, .brief, .brief-done, .cta) {
+  --flow: initial;
+}
+
 :where(.flow, .prose, .brief, .brief-done) {
   display: grid;
 }
@@ -1128,9 +1138,15 @@ body>canvas {
   color: var(--sky-ink);
 }
 
+/* Текстовая часть фазы: интервалы между заголовком и обоими абзацами одинаковые,
+   поэтому это gap, а не два встречных маржина. */
+.ph> :last-child {
+  display: grid;
+  gap: var(--sp-0);
+}
+
 .ph h4 {
   font: 500 var(--fs-2)/1.3 var(--body);
-  margin-block-end: var(--sp-0);
 }
 
 .ph p {
@@ -1138,7 +1154,6 @@ body>canvas {
 }
 
 .ph .got {
-  margin-block-start: var(--sp-0);
   color: var(--ink);
   font-size: var(--fs-0);
   /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
@@ -1166,11 +1181,12 @@ body>canvas {
 
 .types dt {
   font: 500 var(--fs-2)/1.3 var(--body);
-  margin-block-start: var(--sp-3);
 }
 
-.types dt:first-of-type {
-  margin-block-start: 0;
+/* Через dd + dt, а не dt + правило-исключение для первого: интервал нужен
+   только между парами, у первого dt предыдущего dd нет. */
+.types dd+dt {
+  margin-block-start: var(--sp-3);
 }
 
 .types dd {
