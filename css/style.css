@@ -329,17 +329,17 @@ button {
   line-height: .92;
   white-space: nowrap;
   letter-spacing: .028em;
-  /* Не ритм, а оптика: гасим хвостовой трекинг, чтобы вордмарк встал по центру.
-     Значение обязано равняться letter-spacing выше, к шкале отступов отношения не имеет. */
   margin-inline: -.028em 0;
-  /* Объём: имя будто вытиснено в перламутре. Градиент лепит форму — тёмная фаска сверху,
-     тело буквы, лёгкая собственная тень, растворение в свету к низу (см. арт-дирекшн). */
-  background: linear-gradient(to bottom, #C4C8CF 0%, #A8ADB6 11%, #bec2ca 38%, #d4d7dd40 62%, #eaedf14f 76%, #E7E9EC 92%, #F1F2F4 100%);
+  /* background: linear-gradient(to bottom, #C4C8CF 0%, #A8ADB6 11%, #bec2ca 38%, #d4d7dd40 62%, #eaedf14f 76%, #E7E9EC 92%, #F1F2F4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
-  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%));
+  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%)); */
+  background: linear-gradient(to bottom, #C4C8CF 0%, #A8ADB6 11%, #bec2ca 38%, #d4d7dd 62%, #eaedf1 76%, #E7E9EC 92%, #f1f2f4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  --relief: drop-shadow(1px 1px 1px #1c1e22);
   filter: var(--relief);
   user-select: none;
 }
