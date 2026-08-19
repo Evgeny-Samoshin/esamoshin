@@ -46,181 +46,194 @@
 <!-- Персистентный фон-дым (Vanta.FOG). Живёт вне #page. -->
 <div class="smoke" id="smoke" aria-hidden="true"></div>
 
-<div id="page" data-page="brief" class="doc">
+<div id="page" class="page" data-page="brief">
 <header class="site-head">
-  <a class="site-logo" href="index.html">SAMOSHIN</a>
-  <nav class="site-nav" aria-label="Основная навигация">
-    <a href="index.html">Главная</a>
-    <a href="primery.html">Примеры работ</a>
-    <a href="o-mne.html">Обо мне</a>
-    <a href="voprosy.html">Вопросы</a>
+  <a class="site-head__logo" href="index.html">SAMOSHIN</a>
+  <nav aria-label="Основная навигация">
+    <ul class="site-head__list" role="list">
+      <li><a class="site-head__link" href="index.html">Главная</a></li>
+      <li><a class="site-head__link" href="primery.html">Примеры работ</a></li>
+      <li><a class="site-head__link" href="o-mne.html">Обо мне</a></li>
+      <li><a class="site-head__link" href="voprosy.html">Вопросы</a></li>
+    </ul>
   </nav>
 </header>
 
-<main class="wrap brief" id="brief-main">
+<main class="wrap brief content" id="brief-main">
   <button class="back" id="brief-back" type="button">← Назад</button>
-  <h1 class="display">Заказать <em>сайт</em></h1>
-  <p class="lede">Ответь на несколько вопросов о проекте — это займёт пару минут. В ответ пришлю
-    план работ: из каких этапов состоит проект, что выходит на каждом, сколько это стоит и когда
-    будет готово. Бесплатно и ни к чему не обязывает.</p>
 
-  <h2 class="brief-h2">Что будет после брифа</h2>
-  <ol class="brief-steps">
-    <li><b>План с ценами.</b> Разберу ответы и пришлю смету по этапам — видно, за что и когда платишь.</li>
-    <li><b>Созвон.</b> Обсудим план, поправим объём, пока всё не сойдётся.</li>
-    <li><b>Работа по этапам.</b> Оплата по частям, следующий шаг не начинается, пока не принят предыдущий.</li>
-  </ol>
-  <p class="brief-note">Делаю лендинги, сайты-визитки, корпоративные сайты и интернет-магазины.
-    Работает один человек от брифа до запуска — <a href="o-mne.html">подробнее обо мне</a> и
-    <a href="primery.html">примеры работ</a>.</p>
+  <header class="page-head">
+    <h1 class="display display--page">Заказать <em class="display__accent">сайт</em></h1>
+    <p class="lede page-head__intro">Ответь на несколько вопросов о проекте — это займёт пару минут. В ответ пришлю
+      план работ: из каких этапов состоит проект, что выходит на каждом, сколько это стоит и когда
+      будет готово. Бесплатно и ни к чему не обязывает.</p>
+  </header>
 
-  <h2 class="brief-h2">Бриф</h2>
-        <form class="form" id="brief-form" novalidate>
+  <section class="chapter content__chapter">
+    <h2 class="subhead subhead--wide">Что будет после брифа</h2>
+    <ol class="brief__steps chapter__intro">
+      <li class="brief__step"><b class="brief__step-name">План с ценами.</b> Разберу ответы и пришлю смету по этапам — видно, за что и когда платишь.</li>
+      <li class="brief__step"><b class="brief__step-name">Созвон.</b> Обсудим план, поправим объём, пока всё не сойдётся.</li>
+      <li class="brief__step"><b class="brief__step-name">Работа по этапам.</b> Оплата по частям, следующий шаг не начинается, пока не принят предыдущий.</li>
+    </ol>
+    <p class="note chapter__item">Делаю лендинги, сайты-визитки, корпоративные сайты и интернет-магазины.
+      Работает один человек от брифа до запуска — <a class="link" href="o-mne.html">подробнее обо мне</a> и
+      <a class="link" href="primery.html">примеры работ</a>.</p>
+  </section>
+
+  <section class="chapter content__chapter">
+    <h2 class="subhead subhead--wide">Бриф</h2>
+        <form class="form chapter__major" id="brief-form" novalidate>
 
           <fieldset class="step" data-step="1">
-            <legend><span class="step-n">01</span> О твоём деле</legend>
+            <legend class="step__legend"><span class="step__num">01</span> О твоём деле</legend>
             <label class="field">
               <span class="q">Чем занимается твой бизнес?</span>
-              <textarea name="business" rows="2" required placeholder="Например: юрист по банкротству, доставка цветов, студия мебели на заказ"></textarea>
+              <textarea class="input" name="business" rows="2" required placeholder="Например: юрист по банкротству, доставка цветов, студия мебели на заказ"></textarea>
             </label>
             <label class="field">
               <span class="q">Кто твои клиенты?</span>
-              <textarea name="clients" rows="2" required placeholder="Например: частные лица, компании, и те и другие"></textarea>
+              <textarea class="input" name="clients" rows="2" required placeholder="Например: частные лица, компании, и те и другие"></textarea>
             </label>
           </fieldset>
 
           <fieldset class="step" data-step="2" data-required="one">
-            <legend><span class="step-n">02</span> Что должен делать сайт?</legend>
-            <p class="q-note">Выбери один вариант</p>
+            <legend class="step__legend"><span class="step__num">02</span> Что должен делать сайт?</legend>
+            <p class="hint">Выбери один вариант</p>
             <div class="opts">
-              <label class="opt"><input type="radio" name="goal" value="Продать конкретную услугу или продукт"><span>Продать конкретную услугу или продукт</span></label>
-              <label class="opt"><input type="radio" name="goal" value="Рассказать о компании и услугах"><span>Рассказать о компании и услугах</span></label>
-              <label class="opt"><input type="radio" name="goal" value="Показать всё, что мы делаем: услуги, команда, проекты"><span>Показать всё, что мы делаем: услуги, команда, проекты</span></label>
-              <label class="opt"><input type="radio" name="goal" value="Продавать товары через интернет"><span>Продавать товары через интернет</span></label>
-              <label class="opt opt--own"><input type="radio" name="goal" value="__own"><span>Свой вариант</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="goal" value="Продать конкретную услугу или продукт"><span>Продать конкретную услугу или продукт</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="goal" value="Рассказать о компании и услугах"><span>Рассказать о компании и услугах</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="goal" value="Показать всё, что мы делаем: услуги, команда, проекты"><span>Показать всё, что мы делаем: услуги, команда, проекты</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="goal" value="Продавать товары через интернет"><span>Продавать товары через интернет</span></label>
+              <label class="opt opt--own"><input class="opt__input" type="radio" name="goal" value="__own"><span>Свой вариант</span></label>
             </div>
-            <input class="own-input" type="text" name="goal_own" placeholder="Свой вариант" hidden>
+            <input class="input input--own" type="text" name="goal_own" placeholder="Свой вариант" hidden>
           </fieldset>
 
           <fieldset class="step" data-step="3" data-required="many">
-            <legend><span class="step-n">03</span> Что должно быть на сайте?</legend>
-            <p class="q-note">Можно несколько</p>
+            <legend class="step__legend"><span class="step__num">03</span> Что должно быть на сайте?</legend>
+            <p class="hint">Можно несколько</p>
             <div class="opts opts--grid">
-              <label class="opt"><input type="checkbox" name="blocks" value="Услуги или товары"><span>Услуги или товары</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="Цены, прайс"><span>Цены, прайс</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="Отзывы"><span>Отзывы</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="Фото работ, портфолио"><span>Фото работ, портфолио</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="Форма заявки"><span>Форма заявки</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="О компании, команда"><span>О компании, команда</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="FAQ"><span>FAQ</span></label>
-              <label class="opt"><input type="checkbox" name="blocks" value="Блог, новости"><span>Блог, новости</span></label>
-              <label class="opt opt--own"><input type="checkbox" name="blocks" value="__own"><span>Свой вариант</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Услуги или товары"><span>Услуги или товары</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Цены, прайс"><span>Цены, прайс</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Отзывы"><span>Отзывы</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Фото работ, портфолио"><span>Фото работ, портфолио</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Форма заявки"><span>Форма заявки</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="О компании, команда"><span>О компании, команда</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="FAQ"><span>FAQ</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="blocks" value="Блог, новости"><span>Блог, новости</span></label>
+              <label class="opt opt--own"><input class="opt__input" type="checkbox" name="blocks" value="__own"><span>Свой вариант</span></label>
             </div>
-            <input class="own-input" type="text" name="blocks_own" placeholder="Свой вариант" hidden>
+            <input class="input input--own" type="text" name="blocks_own" placeholder="Свой вариант" hidden>
           </fieldset>
 
           <fieldset class="step" data-step="4" data-required="one">
-            <legend><span class="step-n">04</span> Как сайт должен выглядеть?</legend>
-            <p class="q-note">Выбери один вариант</p>
+            <legend class="step__legend"><span class="step__num">04</span> Как сайт должен выглядеть?</legend>
+            <p class="hint">Выбери один вариант</p>
             <div class="opts">
-              <label class="opt"><input type="radio" name="style" value="Строго и минималистично"><span>Строго и минималистично</span></label>
-              <label class="opt"><input type="radio" name="style" value="Ярко и смело"><span>Ярко и смело</span></label>
-              <label class="opt"><input type="radio" name="style" value="Дорого и престижно"><span>Дорого и престижно</span></label>
-              <label class="opt"><input type="radio" name="style" value="Современно и технологично"><span>Современно и технологично</span></label>
-              <label class="opt"><input type="radio" name="style" value="Пока не знаю — доверюсь тебе"><span>Пока не знаю — доверюсь тебе</span></label>
-              <label class="opt opt--own"><input type="radio" name="style" value="__own"><span>Свой вариант</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="style" value="Строго и минималистично"><span>Строго и минималистично</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="style" value="Ярко и смело"><span>Ярко и смело</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="style" value="Дорого и престижно"><span>Дорого и престижно</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="style" value="Современно и технологично"><span>Современно и технологично</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="style" value="Пока не знаю — доверюсь тебе"><span>Пока не знаю — доверюсь тебе</span></label>
+              <label class="opt opt--own"><input class="opt__input" type="radio" name="style" value="__own"><span>Свой вариант</span></label>
             </div>
-            <input class="own-input" type="text" name="style_own" placeholder="Свой вариант" hidden>
+            <input class="input input--own" type="text" name="style_own" placeholder="Свой вариант" hidden>
           </fieldset>
 
           <fieldset class="step" data-step="5" data-required="many">
-            <legend><span class="step-n">05</span> Что уже есть из материалов?</legend>
-            <p class="q-note">Можно несколько</p>
+            <legend class="step__legend"><span class="step__num">05</span> Что уже есть из материалов?</legend>
+            <p class="hint">Можно несколько</p>
             <div class="opts opts--grid">
-              <label class="opt"><input type="checkbox" name="assets" value="Логотип"><span>Логотип</span></label>
-              <label class="opt"><input type="checkbox" name="assets" value="Тексты"><span>Тексты</span></label>
-              <label class="opt"><input type="checkbox" name="assets" value="Фотографии"><span>Фотографии</span></label>
-              <label class="opt"><input type="checkbox" name="assets" value="Фирменные цвета, брендбук"><span>Фирменные цвета, брендбук</span></label>
-              <label class="opt"><input type="checkbox" name="assets" value="Пока ничего нет"><span>Пока ничего нет</span></label>
-              <label class="opt opt--own"><input type="checkbox" name="assets" value="__own"><span>Свой вариант</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="assets" value="Логотип"><span>Логотип</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="assets" value="Тексты"><span>Тексты</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="assets" value="Фотографии"><span>Фотографии</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="assets" value="Фирменные цвета, брендбук"><span>Фирменные цвета, брендбук</span></label>
+              <label class="opt"><input class="opt__input" type="checkbox" name="assets" value="Пока ничего нет"><span>Пока ничего нет</span></label>
+              <label class="opt opt--own"><input class="opt__input" type="checkbox" name="assets" value="__own"><span>Свой вариант</span></label>
             </div>
-            <input class="own-input" type="text" name="assets_own" placeholder="Свой вариант" hidden>
+            <input class="input input--own" type="text" name="assets_own" placeholder="Свой вариант" hidden>
           </fieldset>
 
           <fieldset class="step" data-step="6" data-required="one:cms one:domain">
-            <legend><span class="step-n">06</span> Технические детали</legend>
+            <legend class="step__legend"><span class="step__num">06</span> Технические детали</legend>
             <p class="q" id="q-cms">Хочешь сам менять тексты и фото после запуска?</p>
             <div class="opts" role="radiogroup" aria-labelledby="q-cms">
-              <label class="opt"><input type="radio" name="cms" value="Да, хочу сам"><span>Да, хочу сам</span></label>
-              <label class="opt"><input type="radio" name="cms" value="Нет, лучше ты"><span>Нет, лучше ты</span></label>
-              <label class="opt"><input type="radio" name="cms" value="Не знаю, что это значит"><span>Не знаю, что это значит</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="cms" value="Да, хочу сам"><span>Да, хочу сам</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="cms" value="Нет, лучше ты"><span>Нет, лучше ты</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="cms" value="Не знаю, что это значит"><span>Не знаю, что это значит</span></label>
             </div>
             <p class="q q--gap" id="q-domain">Есть ли уже адрес сайта (домен)?</p>
             <div class="opts" role="radiogroup" aria-labelledby="q-domain">
-              <label class="opt"><input type="radio" name="domain" value="Да, есть"><span>Да, есть</span></label>
-              <label class="opt"><input type="radio" name="domain" value="Нет, нужно купить"><span>Нет, нужно купить</span></label>
-              <label class="opt"><input type="radio" name="domain" value="Не знаю, что это"><span>Не знаю, что это</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="domain" value="Да, есть"><span>Да, есть</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="domain" value="Нет, нужно купить"><span>Нет, нужно купить</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="domain" value="Не знаю, что это"><span>Не знаю, что это</span></label>
             </div>
           </fieldset>
 
           <fieldset class="step" data-step="7" data-required="one:contact_way">
-            <legend><span class="step-n">07</span> Куда прислать план?</legend>
+            <legend class="step__legend"><span class="step__num">07</span> Куда прислать план?</legend>
             <label class="field">
               <span class="q">Имя</span>
-              <input type="text" name="name" required autocomplete="name" placeholder="Как к тебе обращаться">
+              <input class="input" type="text" name="name" required autocomplete="name" placeholder="Как к тебе обращаться">
             </label>
             <label class="field">
               <span class="q">Телефон или мессенджер</span>
-              <input type="text" name="phone" required autocomplete="tel" inputmode="tel" placeholder="+7 900 000-00-00 или @nickname">
+              <input class="input" type="text" name="phone" required autocomplete="tel" inputmode="tel" placeholder="+7 900 000-00-00 или @nickname">
             </label>
             <label class="field">
-              <span class="q">Email <span class="opt-mark">— по желанию</span></span>
-              <input type="email" name="email" autocomplete="email" placeholder="you@example.com">
+              <span class="q">Email <span class="q__mark">— по желанию</span></span>
+              <input class="input" type="email" name="email" autocomplete="email" placeholder="you@example.com">
             </label>
             <p class="q q--gap" id="q-way">Как удобнее связаться?</p>
             <div class="opts" role="radiogroup" aria-labelledby="q-way">
-              <label class="opt"><input type="radio" name="contact_way" value="Telegram"><span>Telegram</span></label>
-              <label class="opt"><input type="radio" name="contact_way" value="WhatsApp"><span>WhatsApp</span></label>
-              <label class="opt"><input type="radio" name="contact_way" value="Звонок"><span>Звонок</span></label>
-              <label class="opt"><input type="radio" name="contact_way" value="Email"><span>Email</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="contact_way" value="Telegram"><span>Telegram</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="contact_way" value="WhatsApp"><span>WhatsApp</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="contact_way" value="Звонок"><span>Звонок</span></label>
+              <label class="opt"><input class="opt__input" type="radio" name="contact_way" value="Email"><span>Email</span></label>
             </div>
           </fieldset>
 
-          <div class="form-foot">
-            <p class="form-error" id="form-error" role="alert" hidden></p>
+          <div class="form__foot">
+            <p class="form__error" id="form-error" role="alert" hidden></p>
             <button class="btn btn--primary btn--wide" type="submit">Отправить бриф</button>
-            <p class="form-note">Нажимая, ты соглашаешься на обработку контактов для ответа по этой заявке. Ничего больше с ними не происходит.</p>
+            <p class="form__note">Нажимая, ты соглашаешься на обработку контактов для ответа по этой заявке. Ничего больше с ними не происходит.</p>
           </div>
         </form>
+  </section>
 </main>
 
 <!-- Подтверждение — состояние этой же страницы, без отдельного URL. -->
-<section class="wrap brief-done" id="brief-done" hidden>
-  <h2 class="display">Бриф <em>получен</em></h2>
-  <p class="lede">Изучу и вернусь с планом работ в течение суток.</p>
-  <div class="done-actions">
+<section class="wrap done" id="brief-done" hidden>
+  <h2 class="display display--section">Бриф <em class="display__accent">получен</em></h2>
+  <p class="lede done__text">Изучу и вернусь с планом работ в течение суток.</p>
+  <div class="done__actions">
     <button class="btn" id="done-download" type="button">Скачать копию брифа</button>
     <a class="btn btn--ghost" href="index.html">На главную</a>
   </div>
 </section>
 
 <footer class="site-foot">
-  <div class="foot-cols">
+  <div class="site-foot__cols">
+    <nav aria-label="Разделы сайта">
+      <h3 class="site-foot__title">Разделы</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="index.html">Главная</a></li>
+        <li><a class="site-foot__link" href="primery.html">Примеры работ</a></li>
+        <li><a class="site-foot__link" href="o-mne.html">Обо мне</a></li>
+        <li><a class="site-foot__link" href="voprosy.html">Вопросы</a></li>
+      </ul>
+    </nav>
     <div>
-      <h3>Разделы</h3>
-      <a href="index.html">Главная</a>
-      <a href="primery.html">Примеры работ</a>
-      <a href="o-mne.html">Обо мне</a>
-      <a href="voprosy.html">Вопросы</a>
-    </div>
-    <div>
-      <h3>Связаться</h3>
-      <a href="mailto:hello@samoshin.ru">hello@samoshin.ru</a>
-      <!-- REPLACE: реальные ссылки на соцсети -->
-      <a href="https://t.me/USERNAME" rel="me">Telegram</a>
+      <h3 class="site-foot__title">Связаться</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="mailto:hello@samoshin.ru">hello@samoshin.ru</a></li>
+        <!-- REPLACE: реальные ссылки на соцсети -->
+        <li><a class="site-foot__link" href="https://t.me/USERNAME" rel="me">Telegram</a></li>
+      </ul>
     </div>
   </div>
-  <p class="foot-note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
+  <p class="site-foot__note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
 </footer>
 </div><!-- /#page -->
 

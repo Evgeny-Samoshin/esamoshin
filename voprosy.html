@@ -52,81 +52,90 @@
 <!-- Персистентный фон-дым (Vanta.FOG). Живёт вне #page. -->
 <div class="smoke" id="smoke" aria-hidden="true"></div>
 
-<div id="page" data-page="faq" class="doc">
+<div id="page" class="page" data-page="faq">
 <header class="site-head">
-  <a class="site-logo" href="index.html">SAMOSHIN</a>
-  <nav class="site-nav" aria-label="Основная навигация">
-    <a href="index.html">Главная</a>
-    <a href="primery.html">Примеры работ</a>
-    <a href="o-mne.html">Обо мне</a>
-    <a href="voprosy.html" aria-current="page">Вопросы</a>
+  <a class="site-head__logo" href="index.html">SAMOSHIN</a>
+  <nav aria-label="Основная навигация">
+    <ul class="site-head__list" role="list">
+      <li><a class="site-head__link" href="index.html">Главная</a></li>
+      <li><a class="site-head__link" href="primery.html">Примеры работ</a></li>
+      <li><a class="site-head__link" href="o-mne.html">Обо мне</a></li>
+      <li><a class="site-head__link" href="voprosy.html" aria-current="page">Вопросы</a></li>
+    </ul>
   </nav>
 </header>
 
-<main class="wrap prose">
+<main class="wrap section content">
   <a class="back" href="index.html">← На главную</a>
-  <h1 class="display">Частые <em>вопросы</em></h1>
-  <p class="lede">Цена, сроки, материалы и как устроена работа. Если ответа тут нет —
-    <a href="brief.html">заполни бриф</a>, разберём на созвоне.</p>
 
-  <div class="faq">
-    <details class="qa">
-      <summary>Сколько стоит сайт?</summary>
-      <p>Зависит от объёма: количества страниц, сложности дизайна, нужна ли админка и магазин. Поэтому я не называю цену до брифа — иначе это гадание. Заполнишь бриф — пришлю план, где цена разбита по этапам, и видно, за что именно ты платишь. Это бесплатно.</p>
+  <header class="page-head">
+    <h1 class="display display--page">Частые <em class="display__accent">вопросы</em></h1>
+    <p class="lede page-head__intro">Цена, сроки, материалы и как устроена работа. Если ответа тут нет —
+      <a class="link" href="brief.html">заполни бриф</a>, разберём на созвоне.</p>
+  </header>
+
+  <div class="faq content__item">
+    <details class="faq__item">
+      <summary class="faq__q">Сколько стоит сайт?</summary>
+      <p class="faq__a">Зависит от объёма: количества страниц, сложности дизайна, нужна ли админка и магазин. Поэтому я не называю цену до брифа — иначе это гадание. Заполнишь бриф — пришлю план, где цена разбита по этапам, и видно, за что именно ты платишь. Это бесплатно.</p>
     </details>
-    <details class="qa">
-      <summary>Сколько времени это займёт?</summary>
-      <p>Лендинг — обычно 1–2 недели, визитка — 2–3, корпоративный сайт — от месяца. Срок сильно зависит от того, как быстро приходят материалы и правки с твоей стороны. Точные даты по этапам будут в плане.</p>
+    <details class="faq__item">
+      <summary class="faq__q">Сколько времени это займёт?</summary>
+      <p class="faq__a">Лендинг — обычно 1–2 недели, визитка — 2–3, корпоративный сайт — от месяца. Срок сильно зависит от того, как быстро приходят материалы и правки с твоей стороны. Точные даты по этапам будут в плане.</p>
     </details>
-    <details class="qa">
-      <summary>Что мне нужно подготовить?</summary>
-      <p>В идеале — логотип, тексты, фотографии и понимание, кто твой клиент. Если ничего этого нет, не страшно: тексты пишу сам, изображения подбираю, логотип можно оставить на потом. В брифе есть отдельный вопрос про материалы — отметь, что есть, остальное возьму на себя.</p>
+    <details class="faq__item">
+      <summary class="faq__q">Что мне нужно подготовить?</summary>
+      <p class="faq__a">В идеале — логотип, тексты, фотографии и понимание, кто твой клиент. Если ничего этого нет, не страшно: тексты пишу сам, изображения подбираю, логотип можно оставить на потом. В брифе есть отдельный вопрос про материалы — отметь, что есть, остальное возьму на себя.</p>
     </details>
-    <details class="qa">
-      <summary>Обязательно ли делать всё сразу?</summary>
-      <p>Нет. Процесс разбит на этапы именно поэтому: можно запустить сайт в базовом виде и добавлять разделы потом. Оплата тоже по этапам — ты не отдаёшь всю сумму вперёд.</p>
+    <details class="faq__item">
+      <summary class="faq__q">Обязательно ли делать всё сразу?</summary>
+      <p class="faq__a">Нет. Процесс разбит на этапы именно поэтому: можно запустить сайт в базовом виде и добавлять разделы потом. Оплата тоже по этапам — ты не отдаёшь всю сумму вперёд.</p>
     </details>
-    <details class="qa">
-      <summary>Смогу ли я сам менять тексты и фото?</summary>
-      <p>Да, если скажешь об этом заранее — тогда подключаю админку и показываю, как ей пользоваться. Без админки сайт дешевле, но за правками придётся приходить ко мне. В брифе есть этот вопрос.</p>
+    <details class="faq__item">
+      <summary class="faq__q">Смогу ли я сам менять тексты и фото?</summary>
+      <p class="faq__a">Да, если скажешь об этом заранее — тогда подключаю админку и показываю, как ей пользоваться. Без админки сайт дешевле, но за правками придётся приходить ко мне. В брифе есть этот вопрос.</p>
     </details>
-    <details class="qa">
-      <summary>Кто делает сайт?</summary>
-      <p>Я. Не агентство и не конвейер: один человек ведёт проект от брифа до запуска, и на связи всё время один и тот же человек. Поэтому проектов в работе немного, а этапы видно насквозь.</p>
+    <details class="faq__item">
+      <summary class="faq__q">Кто делает сайт?</summary>
+      <p class="faq__a">Я. Не агентство и не конвейер: один человек ведёт проект от брифа до запуска, и на связи всё время один и тот же человек. Поэтому проектов в работе немного, а этапы видно насквозь.</p>
     </details>
-    <details class="qa">
-      <summary>А если мне не понравится?</summary>
-      <p>Для этого этапы и нужны. Дизайн согласуется до вёрстки: сначала концепция, потом макет. Правки внутри этапа — часть работы. Дальше не идём, пока текущий этап не принят — так «не понравилось» вскрывается на макете, а не на готовом сайте.</p>
+    <details class="faq__item">
+      <summary class="faq__q">А если мне не понравится?</summary>
+      <p class="faq__a">Для этого этапы и нужны. Дизайн согласуется до вёрстки: сначала концепция, потом макет. Правки внутри этапа — часть работы. Дальше не идём, пока текущий этап не принят — так «не понравилось» вскрывается на макете, а не на готовом сайте.</p>
     </details>
   </div>
 
-  <p class="brief-note">Как устроен процесс целиком — <a href="o-mne.html#kak-rabotayu">шесть фаз на странице «Обо мне»</a>.
-    Что уже сделано — в <a href="primery.html">примерах работ</a>.</p>
+  <!-- <p class="note content__item">Как устроен процесс целиком — <a class="link" href="o-mne.html#kak-rabotayu">шесть фаз на странице «Обо мне»</a>.
+    Что уже сделано — в <a class="link" href="primery.html">примерах работ</a>.</p> -->
 </main>
 
 <section class="wrap cta">
-  <h2 class="display">Остались <em>вопросы?</em></h2>
-  <p class="lede">Заполни бриф — пришлю план с этапами и ценами. Бесплатно и ни к чему не обязывает.</p>
-  <a class="btn btn--primary" href="brief.html">Заказать сайт</a>
+  <h2 class="display display--section">Остались <em class="display__accent">вопросы?</em></h2>
+  <p class="lede cta__text">Заполни бриф — пришлю план с этапами и ценами. Бесплатно и ни к чему не обязывает.</p>
+  <a class="btn btn--primary cta__btn" href="brief.html">Заказать сайт</a>
 </section>
 
 <footer class="site-foot">
-  <div class="foot-cols">
+  <div class="site-foot__cols">
+    <nav aria-label="Разделы сайта">
+      <h3 class="site-foot__title">Разделы</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="index.html">Главная</a></li>
+        <li><a class="site-foot__link" href="primery.html">Примеры работ</a></li>
+        <li><a class="site-foot__link" href="o-mne.html">Обо мне</a></li>
+        <li><a class="site-foot__link" href="voprosy.html">Вопросы</a></li>
+      </ul>
+    </nav>
     <div>
-      <h3>Разделы</h3>
-      <a href="index.html">Главная</a>
-      <a href="primery.html">Примеры работ</a>
-      <a href="o-mne.html">Обо мне</a>
-      <a href="voprosy.html">Вопросы</a>
-    </div>
-    <div>
-      <h3>Связаться</h3>
-      <a href="mailto:hello@samoshin.ru">hello@samoshin.ru</a>
-      <!-- REPLACE: реальные ссылки на соцсети -->
-      <a href="https://t.me/USERNAME" rel="me">Telegram</a>
+      <h3 class="site-foot__title">Связаться</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="mailto:hello@samoshin.ru">hello@samoshin.ru</a></li>
+        <!-- REPLACE: реальные ссылки на соцсети -->
+        <li><a class="site-foot__link" href="https://t.me/USERNAME" rel="me">Telegram</a></li>
+      </ul>
     </div>
   </div>
-  <p class="foot-note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
+  <p class="site-foot__note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
 </footer>
 </div><!-- /#page -->
 

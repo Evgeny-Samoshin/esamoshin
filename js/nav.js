@@ -50,7 +50,7 @@
     el.style.cssText = 'display:block;position:fixed;left:0;right:0;overflow:hidden;'
       + `top:${-y}px;height:calc(100vh + ${y}px);transform-origin:50% calc(${y}px + 50vh);`;
   }
-  const thaw = (el) => { el.classList.remove('is-out', 'is-in'); el.style.cssText = ''; };
+  const thaw = (el) => { el.classList.remove('page--out', 'page--in'); el.style.cssText = ''; };
 
   let token = 0;                                    // новый переход отменяет анимацию прежнего
 
@@ -66,12 +66,12 @@
 
     const my = ++token;
     const out = page();
-    freeze(out); out.classList.add('is-out');
+    freeze(out); out.classList.add('page--out');
     await wait(DUR);
     if (my !== token) return;                       // обогнал следующий переход
     apply(doc);
     const el = page();
-    freeze(el); el.classList.add('is-in');
+    freeze(el); el.classList.add('page--in');
     await wait(DUR);
     if (my === token) thaw(el);
   }

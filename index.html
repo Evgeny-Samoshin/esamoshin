@@ -49,23 +49,23 @@
 <div class="smoke" id="smoke" aria-hidden="true"></div>
 
 <!-- #page — единственное, что подменяет роутер (display:contents, вне потока). -->
-<div id="page" data-page="home">
-<main class="stage" id="stage">
+<div id="page" class="page" data-page="home">
+<main class="stage">
 
   <!-- ═══════════════ СТАРТ ═══════════════ -->
-  <section class="screen screen--start is-active is-first" id="s-start" data-screen="start">
-    <div class="start">
-      <h1 class="logo">SAMOSHIN</h1>
-      <p class="logo-sub">Сайты для бизнеса</p>
-      <div class="start-actions">
+  <section class="screen screen--start">
+    <div class="start start--first">
+      <h1 class="start__logo">SAMOSHIN</h1>
+      <p class="start__tagline">Сайты для бизнеса</p>
+      <div class="start__actions">
         <a class="btn btn--primary" href="brief.html">Заказать сайт</a>
         <a class="btn" href="primery.html">Примеры работ</a>
       </div>
       <!-- Тонкие двери в контент-слой: тихие, не спорят с двумя кнопками. Дают краулеру внутренние ссылки. -->
-      <nav class="start-doors" aria-label="О специалисте и вопросах">
-        <a class="door" href="o-mne.html">Обо мне</a>
-        <span class="door-sep" aria-hidden="true">·</span>
-        <a class="door" href="voprosy.html">Вопросы</a>
+      <nav class="start__doors" aria-label="О специалисте и вопросах">
+        <a class="start__door" href="o-mne.html">Обо мне</a>
+        <span class="start__sep" aria-hidden="true">·</span>
+        <a class="start__door" href="voprosy.html">Вопросы</a>
       </nav>
     </div>
   </section>

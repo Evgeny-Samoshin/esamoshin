@@ -41,6 +41,8 @@
         cursorColor: '#AAAAAA',
         accentMix: 1
       });
+      // canvas создаёт библиотека — разметки для него нет, класс вешаем здесь (см. .trail в CSS).
+      if (state.fluidSmoke) state.fluidSmoke.canvas.classList.add('trail');
     }
   }
 

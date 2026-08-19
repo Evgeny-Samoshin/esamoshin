@@ -44,83 +44,92 @@
 <!-- Персистентный фон-дым (Vanta.FOG). Живёт вне #page. -->
 <div class="smoke" id="smoke" aria-hidden="true"></div>
 
-<div id="page" data-page="works" class="doc">
+<div id="page" class="page" data-page="works">
 <header class="site-head">
-  <a class="site-logo" href="index.html">SAMOSHIN</a>
-  <nav class="site-nav" aria-label="Основная навигация">
-    <a href="index.html">Главная</a>
-    <a href="primery.html" aria-current="page">Примеры работ</a>
-    <a href="o-mne.html">Обо мне</a>
-    <a href="voprosy.html">Вопросы</a>
+  <a class="site-head__logo" href="index.html">SAMOSHIN</a>
+  <nav aria-label="Основная навигация">
+    <ul class="site-head__list" role="list">
+      <li><a class="site-head__link" href="index.html">Главная</a></li>
+      <li><a class="site-head__link" href="primery.html" aria-current="page">Примеры работ</a></li>
+      <li><a class="site-head__link" href="o-mne.html">Обо мне</a></li>
+      <li><a class="site-head__link" href="voprosy.html">Вопросы</a></li>
+    </ul>
   </nav>
 </header>
 
-<main class="wrap prose">
+<main class="wrap section content">
   <a class="back" href="index.html">← На главную</a>
-  <h1 class="display">Примеры <em>работ</em></h1>
-  <p class="lede">Сделанные сайты для реального бизнеса. Фильтр — по типу.</p>
 
-  <div class="filters" role="group" aria-label="Фильтр по типу сайта">
-    <button class="filter is-on" data-filter="all">Все</button>
+  <header class="page-head">
+    <h1 class="display display--page">Примеры <em class="display__accent">работ</em></h1>
+    <p class="lede page-head__intro">Сделанные сайты для реального бизнеса. Фильтр — по типу.</p>
+  </header>
+
+  <div class="filters content__item" role="group" aria-label="Фильтр по типу сайта">
+    <button class="filter filter--active" data-filter="all">Все</button>
     <button class="filter" data-filter="landing">Лендинги</button>
     <button class="filter" data-filter="card">Визитки</button>
     <button class="filter" data-filter="corp">Корпоративные</button>
     <button class="filter" data-filter="shop">Магазины</button>
   </div>
 
-  <!-- ponytail: превью — CSS-плашки. Появятся скриншоты — меняешь div.case-img на <img alt="…">. -->
-  <div class="cases">
+  <!-- ponytail: превью — CSS-плашки. Появятся скриншоты — меняешь div.case__img на <img alt="…">. -->
+  <div class="cases content__item">
     <article class="case" data-type="landing">
-      <div class="case-img" role="img" aria-label="Превью лендинга арбитражного управляющего"></div>
-      <h2 class="case-t">Лендинг арбитражного управляющего</h2>
-      <p class="case-b">Банкротство физических лиц. Одна страница, одна задача — заявка на консультацию.</p>
-      <p class="case-tag">Лендинг</p>
+      <div class="case__img" role="img" aria-label="Превью лендинга арбитражного управляющего"></div>
+      <h2 class="case__title subhead">Лендинг арбитражного управляющего</h2>
+      <p class="case__text">Банкротство физических лиц. Одна страница, одна задача — заявка на консультацию.</p>
+      <p class="case__tag">Лендинг</p>
     </article>
     <article class="case" data-type="card">
-      <div class="case-img" role="img" aria-label="Превью сайта швейного цеха"></div>
-      <h2 class="case-t">Швейный цех: шторы и текстиль</h2>
-      <p class="case-b">Производство под заказ. Каталог работ, расчёт и контакты.</p>
-      <p class="case-tag">Сайт-визитка</p>
+      <div class="case__img" role="img" aria-label="Превью сайта швейного цеха"></div>
+      <h2 class="case__title subhead">Швейный цех: шторы и текстиль</h2>
+      <p class="case__text">Производство под заказ. Каталог работ, расчёт и контакты.</p>
+      <p class="case__tag">Сайт-визитка</p>
     </article>
     <article class="case" data-type="card">
-      <div class="case-img" role="img" aria-label="Превью сайта студии изделий из керамогранита"></div>
-      <h2 class="case-t">Студия изделий из керамогранита</h2>
-      <p class="case-b">Кухни, декор, мебель. Показать материал и работы так, чтобы было видно качество.</p>
-      <p class="case-tag">Сайт-визитка</p>
+      <div class="case__img" role="img" aria-label="Превью сайта студии изделий из керамогранита"></div>
+      <h2 class="case__title subhead">Студия изделий из керамогранита</h2>
+      <p class="case__text">Кухни, декор, мебель. Показать материал и работы так, чтобы было видно качество.</p>
+      <p class="case__tag">Сайт-визитка</p>
     </article>
     <article class="case" data-type="corp">
-      <div class="case-img" role="img" aria-label="Превью корпоративного сайта завода нефтегазового оборудования"></div>
-      <h2 class="case-t">Завод нефтегазового оборудования</h2>
-      <p class="case-b">Направления, производство, документы, вакансии. Многостраничная структура под каталог продукции.</p>
-      <p class="case-tag">Корпоративный сайт</p>
+      <div class="case__img" role="img" aria-label="Превью корпоративного сайта завода нефтегазового оборудования"></div>
+      <h2 class="case__title subhead">Завод нефтегазового оборудования</h2>
+      <p class="case__text">Направления, производство, документы, вакансии. Многостраничная структура под каталог продукции.</p>
+      <p class="case__tag">Корпоративный сайт</p>
     </article>
   </div>
-  <p class="cases-empty" id="cases-empty" hidden>В этом типе работ пока нет. Ближайшая — в соседнем фильтре.</p>
+  <p class="note content__item" id="cases-empty" hidden>В этом типе работ пока нет. Ближайшая — в соседнем фильтре.</p>
 </main>
 
 <section class="wrap cta">
-  <h2 class="display">Хотите <em>такой же?</em></h2>
-  <p class="lede">Заполните бриф — пришлю план с этапами и ценами. Бесплатно и ни к чему не обязывает.</p>
-  <a class="btn btn--primary" href="brief.html">Заказать сайт</a>
+  <h2 class="display display--section">Хотите <em class="display__accent">такой же?</em></h2>
+  <p class="lede cta__text">Заполните бриф — пришлю план с этапами и ценами. Бесплатно и ни к чему не обязывает.</p>
+  <a class="btn btn--primary cta__btn" href="brief.html">Заказать сайт</a>
 </section>
 
 <footer class="site-foot">
-  <div class="foot-cols">
+  <div class="site-foot__cols">
+    <nav aria-label="Разделы сайта">
+      <h3 class="site-foot__title">Разделы</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="index.html">Главная</a></li>
+        <li><a class="site-foot__link" href="primery.html">Примеры работ</a></li>
+        <li><a class="site-foot__link" href="o-mne.html">Обо мне</a></li>
+        <li><a class="site-foot__link" href="voprosy.html">Вопросы</a></li>
+      </ul>
+    </nav>
     <div>
-      <h3>Разделы</h3>
-      <a href="index.html">Главная</a>
-      <a href="primery.html">Примеры работ</a>
-      <a href="o-mne.html">Обо мне</a>
-      <a href="voprosy.html">Вопросы</a>
-    </div>
-    <div>
-      <h3>Связаться</h3>
-      <a href="mailto:hello@samoshin.ru">hello@samoshin.ru</a>
-      <!-- REPLACE: реальные ссылки на соцсети -->
-      <a href="https://t.me/USERNAME" rel="me">Telegram</a>
+      <h3 class="site-foot__title">Связаться</h3>
+      <ul class="site-foot__list" role="list">
+        <li><a class="site-foot__link" href="mailto:hello@samoshin.ru">hello@samoshin.ru</a></li>
+        <!-- REPLACE: реальные ссылки на соцсети -->
+        <li><a class="site-foot__link" href="https://t.me/USERNAME" rel="me">Telegram</a></li>
+      </ul>
     </div>
   </div>
-  <p class="foot-note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
+  <p class="site-foot__note">© SAMOSHIN — сайты для бизнеса. Евгений Самошин.</p>
 </footer>
 </div><!-- /#page -->
 

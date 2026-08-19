@@ -55,8 +55,8 @@ window.PAGES = (function () {
         });
       }
       $$('.step', form).forEach(step => {
-        const own = step.querySelector('.opt--own input');
-        const input = step.querySelector('.own-input');
+        const own = step.querySelector('.opt--own .opt__input');
+        const input = step.querySelector('.input--own');
         if (own && input) input.hidden = !own.checked;
       });
     }
@@ -76,16 +76,16 @@ window.PAGES = (function () {
       return out;
     }
 
-    const clearBad = (step) => { step.classList.remove('is-bad'); $$('[name]', step).forEach(f => f.removeAttribute('aria-invalid')); };
+    const clearBad = (step) => { step.classList.remove('step--invalid'); $$('[name]', step).forEach(f => f.removeAttribute('aria-invalid')); };
 
     function validate(a) {
-      $$('.step.is-bad', form).forEach(clearBad);
+      $$('.step--invalid', form).forEach(clearBad);
       const missing = REQUIRED.filter(k => a[k].length === 0);
       if (!missing.length) return true;
       missing.forEach(k => {
         const field = $(`[name="${k}"]`, form);
         field.setAttribute('aria-invalid', 'true');
-        field.closest('.step').classList.add('is-bad');
+        field.closest('.step').classList.add('step--invalid');
       });
       const err = $('#form-error', root);
       err.textContent = missing.length === 1
@@ -124,15 +124,15 @@ window.PAGES = (function () {
 
     form.addEventListener('change', (e) => {
       const group = e.target.closest('.step');
-      const ownBox = group?.querySelector('.opt--own input');
-      const ownInput = group?.querySelector('.own-input');
+      const ownBox = group?.querySelector('.opt--own .opt__input');
+      const ownInput = group?.querySelector('.input--own');
       if (ownBox && ownInput) { ownInput.hidden = !ownBox.checked; if (e.target.closest('.opt--own')) ownInput.focus(); }
       save();
     });
 
     form.addEventListener('input', (e) => {
       save();
-      const step = e.target.closest('.step.is-bad');
+      const step = e.target.closest('.step--invalid');
       if (step && !REQUIRED.some(k => $(`[name="${k}"]`, step) && answers()[k].length === 0)) clearBad(step);
     });
 
@@ -164,7 +164,7 @@ window.PAGES = (function () {
     function apply(type) {
       let shown = 0;
       cards.forEach(c => { const ok = type === 'all' || c.dataset.type === type; c.hidden = !ok; shown += ok ? 1 : 0; });
-      pills.forEach(p => p.classList.toggle('is-on', p.dataset.filter === type));
+      pills.forEach(p => p.classList.toggle('filter--active', p.dataset.filter === type));
       empty.hidden = shown > 0;
     }
     $('.filters', root).addEventListener('click', (e) => { const b = e.target.closest('.filter'); if (b) apply(b.dataset.filter); });
@@ -182,7 +182,7 @@ window.PAGES = (function () {
 
     form.reset();
     ok(api.validate(api.answers()) === false, 'пустой бриф должен не пройти');
-    ok(form.querySelectorAll('.step.is-bad').length === 7, 'должны подсветиться все 7 шагов');
+    ok(form.querySelectorAll('.step--invalid').length === 7, 'должны подсветиться все 7 шагов');
     set('business', 'Мебель'); set('clients', 'Люди');
     pick('goal', '__own'); set('goal_own', 'Собрать заявки с рекламы');
     pick('blocks', 'Отзывы'); pick('blocks', '__own'); set('blocks_own', 'Калькулятор');

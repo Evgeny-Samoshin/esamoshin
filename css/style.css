@@ -26,22 +26,33 @@
   --body-w: 400;
   /* вес корпусного текста: единственная ручка настройки, вариативная ось 100..700 */
 
-  /* Модульная шкала: старт 14px, шаг 1.25. Значения округлены до 0.5px.
-     14 · 1.25 = 17.5 · 1.25 = 21.9 → 22 · 1.25 = 27.3 → 27 · 1.25 = 34.2 → 34 …
-     Нижние ступени фиксированы: 14px — пол, ниже него не опускаемся нигде.
-     Крупные заголовки текучие, но оба конца clamp — тоже ступени шкалы,
-     поэтому на любой ширине размер попадает в шкалу, а не между ступенями. */
+  /* Шкала кегля: пять ступеней, все чётные.
+     Задана тремя соотношениями, а не прогрессией:
+       h2 = h1 / 2                 → 26 = 52 / 2
+       корпус = h2 − 30%           → 18 = 26 × 0.69
+       остальные две — крупный акцент и подпись.
+     Пять ступеней вместо восьми намеренно: шкалу выбирают, а не идут по ней
+     подряд. Соседние роли различаются начертанием и цветом, а не кеглем.
+     14px — пол, ниже не опускаемся нигде.
+     Вордмарк главной (.start__logo, 17.2vw) в шкалу не входит: это знак, не текст. */
   --fs-0: 14px;
-  --fs-1: 17.5px;
-  --fs-2: 22px;
-  --fs-3: 27px;
-  --fs-4: 34px;
-  --fs-5: 43px;
-  --fs-6: 54px;
-  --fs-7: 67px;
+  /* подписи, подвал, теги, «назад», фильтры */
+  --fs-1: 18px;
+  /* корпус, кнопки, поля, навигация, подзаголовки */
+  --fs-2: 26px;
+  /* h2 раздела, логотип шапки, легенда шага */
+  --fs-3: 36px;
+  /* номер фазы; h1 на ≤900px */
+  --fs-4: 52px;
+  /* h1 страницы */
+
+  /* Строка корпуса обязана остаться ровно 28px: на ней стоит вся шкала
+     отступов (--sp-3 = 28 = одна строка). 18 × 1.6 дало бы 28.8 и увело
+     вертикальный ритм на 3%. */
+  --lh-body: calc(28 / 18);
 
   /* ───── Шкала отступов ─────
-     Верх шкалы (28 / 42 / 56 / 84 / 112) кратен строке корпуса: 17.5 × 1.6 = 28px.
+     Верх шкалы (28 / 42 / 56 / 84 / 112) кратен строке корпуса: 18 × --lh-body = 28px.
      Крупные интервалы садятся на текстовый ритм.
      Низ (8 / 14 / 22) подобран под задачи, а не выведен формулой: это плотные
      интервалы внутри контролов, где ритм строки уже не читается, а читается
@@ -58,7 +69,7 @@
   --sp-3: 28px;
   /* абзац↔абзац, блок↔блок */
   --sp-4: 42px;
-  /* текст → следующий заголовок */
+  /* текст → следующий заголовок, раздел↔раздел */
   --sp-5: 56px;
   /* крупные блоки внутри секции */
   --sp-6: 84px;
@@ -81,7 +92,7 @@
   --tap: 44px;
   /* минимальная сенсорная область, WCAG 2.5.8 (целевой AAA) */
   --measure: 600px;
-  /* ширина текстовой колонки: 68 знаков при 17.5px — замерено, зона комфорта 55–75 */
+  /* ширина текстовой колонки: 66 знаков при 18px — замерено, зона комфорта 55–75 */
 
   --pad: clamp(21px, 5vw, 56px);
   /* боковое поле экрана: --sp-2 → --sp-5 */
@@ -95,6 +106,11 @@
   --ease-soft: cubic-bezier(.4, 0, .2, 1);
 }
 
+/* ═══════════════════════════════════════════════
+   РЕСЕТ. Единственное место в файле, где разрешены селекторы по тегам:
+   это нормализация браузерных умолчаний, а не стилизация компонентов.
+   Вес (0,0,1) — ниже любого блока, поэтому спорить с БЭМ-слоем не может.
+   ═══════════════════════════════════════════════ */
 *,
 *::before,
 *::after {
@@ -114,6 +130,9 @@ html {
   margin: 0;
   background: #F2F3F5;
   /* перламутр-заглушка; сверху ложится дым (fixed, z-index -1) */
+  /* Мобильные: убираем системную подсветку по тапу — она голубая и выбивается из палитры.
+     Отклик даёт :active. Клавиатурный фокус ниже не трогаем — он нужен для доступности. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 html[data-page="home"] {
@@ -124,90 +143,36 @@ html[data-page="home"] {
 body {
   margin: 0;
   min-height: 100%;
-  font: var(--body-w) var(--fs-1)/1.6 var(--body);
+  font: var(--body-w) var(--fs-1)/var(--lh-body) var(--body);
   color: var(--ink);
   text-rendering: optimizeLegibility;
 }
 
 /* Сброс UA-маржинов. Список полный намеренно: раньше здесь не было dl/dd/ul/ol/h4,
-   и маржин dt протекал сквозь dl, съедая объявленный отступ (.types margin-top не работал).
-   Ресет обязан быть в :where() (вес 0): селектор по тегу весит (0,0,1) и
-   иначе перебивает примитив потока, который специально сделан нулевым. */
-:where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure, fieldset, legend) {
+   и маржин dt протекал сквозь dl, съедая объявленный отступ (.types margin-top не работал). */
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure,
+fieldset,
+legend {
   margin: 0;
   padding: 0;
 }
 
-:where(fieldset) {
+fieldset {
   border: 0;
-}
-
-/* ═══════════════════════════════════════════════
-   ПРИМИТИВЫ. Всё остальное строится из этих трёх.
-   Базовые правила — в :where() (специфичность 0), поэтому медиазапрос
-   и любое правило-исключение выигрывают по весу, а не по номеру строки.
-   ═══════════════════════════════════════════════ */
-
-/* 1. Колонка. Единственный горизонтальный контейнер на сайте.
-      max-width считается ОТ --measure, поэтому ширина текста постоянна
-      и не сжимается, когда растёт --pad. */
-:where(.wrap) {
-  max-width: calc(var(--measure) + 2 * var(--pad));
-  margin-inline: auto;
-  padding-inline: var(--pad);
-}
-
-/* 2. Поток. Отступ живёт на элементе, который его получает, и зовётся --flow.
-      display:grid — не ради колонок, а чтобы маржины детей не схлопывались
-      и не протекали сквозь контейнер. На любой разметке блога это будет
-      предсказуемо без BFC-хаков. .cta в список display не входит: у неё
-      своя flex-раскладка по центру, а маржины во flex тоже не схлопываются.
-      Новым страницам (кейсы, блог) достаточно class="flow". */
-
-/* --flow — обычное кастомное свойство, а значит наследуется. Без этого сброса
-   вложенный контейнер потока раздавал бы своим детям то значение, которое
-   досталось ему самому от родителя: секция после заголовка получает 22 — и все
-   абзацы внутри неё тоже получали 22 вместо 28 (проверено замером).
-   `initial` возвращает свойство в невалидное состояние, и var() берёт запасное. */
-:where(.flow, .prose, .brief, .brief-done, .cta) {
-  --flow: initial;
-}
-
-:where(.flow, .prose, .brief, .brief-done) {
-  display: grid;
-}
-
-:where(.flow, .prose, .brief, .brief-done, .cta)>*+* {
-  margin-block-start: var(--flow, var(--sp-3));
-}
-
-:where(.flow, .prose, .brief, .brief-done, .cta)>:is(h2, h3) {
-  --flow: var(--sp-4);
-}
-
-:where(.flow, .prose, .brief, .brief-done, .cta)>:is(h1, h2, h3)+* {
-  --flow: var(--sp-2);
-}
-
-/* Ссылка «На главную» уже даёт воздух собственной высотой (--tap). */
-:where(.flow, .prose, .brief)>.back+:is(h1, h2) {
-  --flow: 0;
-}
-
-/* 3. Секция. Вертикальные поля всего сайта — одна ручка. */
-:where(.section) {
-  padding-block: var(--sp-section);
 }
 
 button {
   font: inherit;
   color: inherit;
-}
-
-/* Мобильные: убираем системную подсветку по тапу — она голубая и выбивается из палитры.
-   Отклик даёт :active. Клавиатурный фокус ниже не трогаем — он нужен для доступности. */
-html {
-  -webkit-tap-highlight-color: transparent;
 }
 
 :focus-visible {
@@ -216,8 +181,87 @@ html {
   border-radius: 2px;
 }
 
-/* ═══════════════ фон-заглушка ═══════════════ */
-/* ponytail: статический перламутр + очень медленный дрейф. Сюда встанет fluid-дым. */
+/* ═══════════════════════════════════════════════
+   ПРИМИТИВЫ РАСКЛАДКИ. Два блока без содержания, которые подмешиваются
+   к смысловым (БЭМ-микс): .wrap — колонка, .section — вертикальные поля.
+   Оба стилизуют только сами себя и в чужих детей не лезут.
+   ═══════════════════════════════════════════════ */
+
+/* 1. Колонка. Единственный горизонтальный контейнер на сайте.
+      max-width считается ОТ --measure, поэтому ширина текста постоянна
+      и не сжимается, когда растёт --pad. */
+.wrap {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
+  /* Контент — над дымом (.smoke z-index -1, .trail 0), иначе секции уходят под них. */
+  position: relative;
+  z-index: 1;
+}
+
+/* 2. Секция. Вертикальные поля всего сайта — одна ручка. */
+.section {
+  padding-block: var(--sp-section);
+}
+
+/* ═══════════════════════════════════════════════
+   ВЕРТИКАЛЬНЫЙ РИТМ
+   Отступ принадлежит блоку и раздаётся его элементам по именам. Универсального
+   селектора («каждому соседу») здесь нет: интервал соседа — это его собственный
+   класс-слот, а не структурная случайность.
+
+   Слотов три, и они одни на весь сайт:
+     __intro             — первый элемент под заголовком  → --sp-2
+     __item              — следующий соседний блок        → --sp-3
+     __major / __chapter — крупный блок: раздел, форма    → --sp-4
+   Четвёртого слота — «заголовок» — нет: он открывает блок, его отступ равен нулю,
+   объявлять нечего. Класса-пустышки под него тоже нет.
+
+   display:grid у контейнеров — не ради колонок, а чтобы маржины элементов
+   не схлопывались друг с другом и не протекали сквозь контейнер наружу.
+   ═══════════════════════════════════════════════ */
+
+/* Колонка контента страницы: <main>. Микс с .wrap и .section (или .brief). */
+.content {
+  display: grid;
+}
+
+.content__item {
+  margin-block-start: var(--sp-3);
+}
+
+.content__chapter {
+  margin-block-start: var(--sp-4);
+}
+
+/* Шапка страницы: h1 и то, что стоит прямо под ним, — лид или портрет. */
+.page-head {
+  display: grid;
+}
+
+.page-head__intro {
+  margin-block-start: var(--sp-2);
+}
+
+/* Раздел страницы. Вложенный раздел — тот же блок в слоте __major. */
+.chapter {
+  display: grid;
+}
+
+.chapter__intro {
+  margin-block-start: var(--sp-2);
+}
+
+.chapter__item {
+  margin-block-start: var(--sp-1);
+}
+
+.chapter__major {
+  margin-block-start: var(--sp-4);
+}
+
+/* ═══════════════ фон ═══════════════ */
+/* Статический перламутр под WebGL-туманом: остаётся, если WebGL недоступен. */
 .smoke {
   position: fixed;
   inset: -20%;
@@ -230,13 +274,10 @@ html {
     var(--bg);
 }
 
-/* Vanta вставляет сюда <canvas> и двигает фон сам — CSS-дрейф больше не нужен. */
-
-/* Мягкая реакция на курсор — отдельным слоем, чтобы не пересобирать фон на каждое движение.
-   Свечение, а не частицы: тише и не тянет фокус. Тач-устройствам не показываем. */
 /* Курсорный дым-след (FluidSmoke) — прозрачный canvas, prepend-ится в body.
+   Класс вешает smoke-bg.js: canvas создаёт библиотека, разметки для него нет.
    Персистентный на всех страницах → fixed (библиотека вешает absolute). Над туманом (-1), под контентом (1). */
-body>canvas {
+.trail {
   z-index: 0;
   position: fixed !important;
   /* Размер в vw/vh, а не 100% (как ставит библиотека). vw/vh включают полосу прокрутки,
@@ -248,11 +289,11 @@ body>canvas {
 }
 
 /* Обёртка навигации: вне потока, чтобы .stage/контент верстались как без неё. */
-#page {
+.page {
   display: contents;
 }
 
-/* ═══════════════ главный экран ═══════════════ */
+/* ═══════════════ погружение: главный экран ═══════════════ */
 /* Единственный экран на весь вьюпорт. Переключение страниц — забота роутера. */
 .stage {
   position: fixed;
@@ -266,24 +307,217 @@ body>canvas {
   overflow: hidden;
 }
 
-/* ═══════════════ типографика ═══════════════ */
-:where(.display) {
+.screen--start {
+  display: grid;
+  place-items: center;
+}
+
+.start {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--safe-t) var(--pad) var(--safe-b);
+  text-align: center;
+}
+
+.start__logo {
   font-family: var(--display);
   font-weight: 300;
-  font-size: var(--fs-7);
+  font-size: 17.2vw;
+  line-height: .92;
+  white-space: nowrap;
+  letter-spacing: .028em;
+  /* Не ритм, а оптика: гасим хвостовой трекинг, чтобы вордмарк встал по центру.
+     Значение обязано равняться letter-spacing выше, к шкале отступов отношения не имеет. */
+  margin-inline: -.028em 0;
+  /* Объём: имя будто вытиснено в перламутре. Градиент лепит форму — тёмная фаска сверху,
+     тело буквы, лёгкая собственная тень, растворение в свету к низу (см. арт-дирекшн). */
+  background: linear-gradient(to bottom, #C4C8CF 0%, #A8ADB6 11%, #bec2ca 38%, #d4d7dd40 62%, #eaedf14f 76%, #E7E9EC 92%, #F1F2F4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
+  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%));
+  filter: var(--relief);
+  user-select: none;
+}
+
+.start__tagline {
+  margin-block-start: var(--sp-0);
+  font-size: var(--fs-1);
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: #1c1e228a;
+}
+
+.start__actions {
+  margin-block-start: var(--sp-vh);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  justify-content: center;
+}
+
+/* Тонкие двери: тихий ряд ссылок под кнопками. Появляются последними, шёпотом. */
+.start__doors {
+  margin-block-start: var(--sp-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  justify-content: center;
+  align-items: baseline;
+}
+
+.start__door {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  /* Ступень основного текста, а не подписи: на главном экране это единственная
+     навигация. Заодно даёт высоту строки 28px — WCAG 2.5.8 требует минимум 24. */
+  font-size: var(--fs-1);
+  letter-spacing: .04em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 160ms var(--ease-soft);
+}
+
+.start__door:hover,
+.start__door:focus-visible {
+  color: var(--sky-ink);
+}
+
+.start__sep {
+  color: var(--line-ui);
+  user-select: none;
+}
+
+/* появление по очереди: логотип проявляется из света → подпись → кнопки.
+   Рельеф (--relief) держим в обоих кадрах: анимация пишет в тот же filter,
+   и без него объём включался бы рывком в конце появления. */
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    filter: blur(16px) var(--relief);
+    transform: scale(1.015);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0) var(--relief);
+    transform: none;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* только при первом заходе: на возврате ждать проявление логотипа — наказание, а не приём */
+.start--first .start__logo {
+  animation: logo-in 1100ms var(--ease-dive) backwards;
+}
+
+.start--first .start__tagline {
+  animation: rise-in 620ms var(--ease-dive) 620ms backwards;
+}
+
+.start--first .start__actions {
+  animation: rise-in 620ms var(--ease-dive) 860ms backwards;
+}
+
+.start--first .start__doors {
+  animation: rise-in 620ms var(--ease-dive) 1080ms backwards;
+}
+
+/* ═══════════════ типографика ═══════════════ */
+/* База несёт гарнитуру, вес и оптику; кегль — на модификаторах (см. CLAUDE.md).
+   26 = ровно половина 52: h2 вдвое меньше h1. */
+.display {
+  font-family: var(--display);
+  font-weight: 300;
   line-height: 1.12;
   letter-spacing: -0.01em;
 }
 
-.display em,
-.logo-sub em {
+.display--page {
+  font-size: var(--fs-4);
+}
+
+.display--section {
+  font-size: var(--fs-2);
+}
+
+.display__accent {
   font-style: italic;
+  color: var(--sky-ink);
 }
 
 .lede {
   color: var(--ink);
   font-weight: 400;
-  font-size: var(--fs-2);
+  font-size: var(--fs-1);
+}
+
+/* Корпусный абзац раздела — второстепенный тон, --ink остаётся за заголовками.
+   Ряд: .lede → .copy. */
+.copy {
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* Подзаголовок внутри раздела: «Шесть фаз», «Бриф», названия карточек и типов сайтов.
+   Кегль общий с корпусом — ранг держат вес 500 и плотная строка 1.3. */
+.subhead {
+  font: 500 var(--fs-1)/1.3 var(--body);
+}
+
+.subhead--wide {
+  letter-spacing: .02em;
+}
+
+/* Строчная ссылка в тексте. */
+.link {
+  color: var(--sky-ink);
+}
+
+/* Приглушённая сноска: примечание под брифом, «в этом типе работ пока нет». */
+.note {
+  color: var(--muted);
+}
+
+.back {
+  width: fit-content;
+  /* контейнер — grid, иначе кнопка растянулась бы на всю колонку */
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  border: 0;
+  background: none;
+  padding-block: var(--sp-0);
+  padding-inline: 0 var(--sp-1);
+  color: var(--muted);
+  font-size: var(--fs-0);
+  text-decoration: none;
+  /* на контент-страницах это <a href="index.html">, на брифе — <button> с history.back() */
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.back:hover {
+  color: var(--ink);
 }
 
 /* ═══════════════ кнопки ═══════════════ */
@@ -359,206 +593,163 @@ body>canvas {
   padding: var(--sp-2) var(--sp-3);
 }
 
-/* ═══════════════ СТАРТ ═══════════════ */
-.screen--start {
-  display: grid;
-  place-items: center;
-}
-
-.start {
-  width: 100%;
-  height: 100vh;
+/* ═══════════════ шапка сайта ═══════════════ */
+/* Та же колонка, что у контента: логотип, h1 и подвал стоят на одной
+   вертикали (было три разные оси — 64 / 344 / 280 на 1280px). */
+.site-head {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: var(--safe-t) var(--pad) var(--safe-b);
-  text-align: center;
-}
-
-:where(.logo) {
-  font-family: var(--display);
-  font-weight: 300;
-  font-size: 17.2vw;
-  line-height: .92;
-  white-space: nowrap;
-  letter-spacing: .028em;
-  /* Не ритм, а оптика: гасим хвостовой трекинг, чтобы вордмарк встал по центру.
-     Значение обязано равняться letter-spacing выше, к шкале отступов отношения не имеет. */
-  margin-inline: -.028em 0;
-  /* Объём: имя будто вытиснено в перламутре. Градиент лепит форму — тёмная фаска сверху,
-     тело буквы, лёгкая собственная тень, растворение в свету к низу (см. арт-дирекшн). */
-  background: linear-gradient(to bottom, #C4C8CF 0%, #A8ADB6 11%, #bec2ca 38%, #d4d7dd40 62%, #eaedf14f 76%, #E7E9EC 92%, #F1F2F4 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* drop-shadow, а не text-shadow: при background-clip:text тень просвечивает сквозь буквы.*/
-  --relief: drop-shadow(-0.1px 0.1px 0px rgb(12 12 12 / 28%)) drop-shadow(1px 1px 1px rgb(0 0 0 / 68%));
-  filter: var(--relief);
-  user-select: none;
-}
-
-:where(.logo-sub) {
-  margin-block-start: var(--sp-0);
-  font-size: var(--fs-1);
-  letter-spacing: .34em;
-  text-transform: uppercase;
-  color: #1c1e228a;
-}
-
-:where(.start-actions) {
-  margin-block-start: var(--sp-vh);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  justify-content: center;
-}
-
-/* появление по очереди: логотип проявляется из света → подпись → кнопки.
-   Рельеф (--relief) держим в обоих кадрах: анимация пишет в тот же filter,
-   и без него объём включался бы рывком в конце появления. */
-@keyframes logo-in {
-  from {
-    opacity: 0;
-    filter: blur(16px) var(--relief);
-    transform: scale(1.015);
-  }
-
-  to {
-    opacity: 1;
-    filter: blur(0) var(--relief);
-    transform: none;
-  }
-}
-
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(9px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* только при первом заходе: на возврате ждать проявление логотипа — наказание, а не приём */
-.screen--start.is-first .logo {
-  animation: logo-in 1100ms var(--ease-dive) backwards;
-}
-
-.screen--start.is-first .logo-sub {
-  animation: rise-in 620ms var(--ease-dive) 620ms backwards;
-}
-
-.screen--start.is-first .start-actions {
-  animation: rise-in 620ms var(--ease-dive) 860ms backwards;
-}
-
-/* Тонкие двери: тихий ряд ссылок под кнопками. Появляются последними, шёпотом. */
-.start-doors {
-  margin-block-start: var(--sp-3);
-  display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--sp-1);
-  justify-content: center;
-  align-items: baseline;
+  padding-block: var(--sp-2);
+  position: relative;
+  z-index: 1;
 }
 
-.door {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-  /* Ступень основного текста, а не подписи: на главном экране это единственная
-     навигация. Заодно даёт высоту строки 28px — WCAG 2.5.8 требует минимум 24. */
-  font-size: var(--fs-1);
-  letter-spacing: .04em;
+.site-head__logo {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: var(--fs-2);
+  letter-spacing: .06em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.site-head__list {
+  display: flex;
+  flex-wrap: wrap;
+  /* без justify-content: на десктопе меню и так прижато справа (space-between),
+     а на мобильных оно встаёт по левому краю — на одну ось с логотипом. */
+  gap: var(--sp-2);
+  list-style: none;
+}
+
+.site-head__link {
   color: var(--muted);
   text-decoration: none;
-  transition: color 160ms var(--ease-soft);
+  /* см. .start__door: 14px давало высоту 22.4px, ниже минимума WCAG 2.5.8 */
+  font-size: var(--fs-1);
+  letter-spacing: .02em;
+  transition: color 160ms ease;
 }
 
-.door:hover,
-.door:focus-visible {
-  color: var(--sky-ink);
+/* aria-current — состояние страницы, дублировать его классом-модификатором незачем. */
+.site-head__link:hover,
+.site-head__link[aria-current="page"] {
+  color: var(--ink);
 }
 
-.door-sep {
-  color: var(--line-ui);
-  user-select: none;
+/* ═══════════════ подвал ═══════════════ */
+/* Та же колонка, что шапка и контент (см. .site-head). */
+.site-foot {
+  max-width: calc(var(--measure) + 2 * var(--pad));
+  margin-inline: auto;
+  padding-inline: var(--pad);
+  padding-block: var(--sp-flow) var(--sp-3);
+  color: var(--muted);
+  font-size: var(--fs-0);
+  position: relative;
+  z-index: 1;
 }
 
-.screen--start.is-first .start-doors {
-  animation: rise-in 620ms var(--ease-dive) 1080ms backwards;
+.site-foot__cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--sp-3);
 }
 
-/* ═══════════════ БРИФ (отдельная страница) ═══════════════ */
+.site-foot__title {
+  font: 500 var(--fs-0)/1 var(--body);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-block-end: var(--sp-1);
+}
+
+.site-foot__list {
+  list-style: none;
+}
+
+.site-foot__link {
+  color: var(--muted);
+  text-decoration: none;
+  display: block;
+  /* 22.4 строки + 2×8 = 38.4px по высоте — выше минимума 2.5.8, ближе к --tap */
+  padding-block: var(--sp-0);
+}
+
+.site-foot__link:hover {
+  color: var(--ink);
+}
+
+.site-foot__note {
+  margin-block-start: var(--sp-3);
+  padding-block-start: var(--sp-2);
+  font-size: var(--fs-0);
+}
+
+/* ═══════════════ полоса CTA ═══════════════ */
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-block: var(--sp-section);
+}
+
+.cta__text {
+  margin-block-start: var(--sp-2);
+}
+
+.cta__btn {
+  margin-block-start: var(--sp-3);
+}
+
+/* ═══════════════ БРИФ ═══════════════ */
 .brief {
   padding-block: var(--sp-flow) var(--sp-section);
 }
 
-.brief-h2 {
-  font: 500 var(--fs-2)/1.3 var(--body);
-  letter-spacing: .02em;
-}
-
-.brief-steps {
+.brief__steps {
   padding-inline-start: var(--sp-2);
   color: var(--muted);
 }
 
-.brief-steps li+li {
+.brief__step+.brief__step {
   margin-block-start: var(--sp-0);
 }
 
-.brief-steps b {
+.brief__step-name {
   color: var(--ink);
   font-weight: 500;
 }
 
-.brief-note {
-  color: var(--muted);
-}
-
-.brief-note a {
-  color: var(--sky-ink);
-}
-
-.brief-done {
-  padding-block: var(--sp-7) var(--sp-section);
-}
-
-.back {
-  width: fit-content;
-  /* контейнер — grid, иначе кнопка растянулась бы на всю колонку */
-  display: flex;
-  align-items: center;
-  min-height: var(--tap);
-  border: 0;
-  background: none;
-  padding-block: var(--sp-0);
-  padding-inline: 0 var(--sp-1);
-  color: var(--muted);
-  font-size: var(--fs-0);
-  text-decoration: none;
-  /* на контент-страницах это <a href="index.html">, на брифе — <button> с history.back() */
-  cursor: pointer;
-  transition: color .3s;
-}
-
-.back:hover {
-  color: var(--ink);
-}
-
 .form {
-  /* форма — крупный блок, а не первый абзац под заголовком */
-  --flow: var(--sp-4);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
+}
+
+.form__foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.form__error {
+  color: var(--sky-ink);
+  font-size: var(--fs-0);
+}
+
+.form__note {
+  font-size: var(--fs-0);
+  color: var(--muted);
+  max-width: 46ch;
+  font-weight: 300;
 }
 
 .step {
@@ -571,22 +762,52 @@ body>canvas {
 /* <legend> не является элементом flex/grid-контейнера — gap на него не действует
    (заголовок шага стоял в 0px от первого вопроса при 14px между вопросами).
    Единственный способ отодвинуть его — собственный маржин. */
-:where(.step legend) {
+.step__legend {
   display: flex;
   align-items: baseline;
   gap: var(--sp-1);
   font-family: var(--display);
   font-weight: 400;
-  font-size: var(--fs-3);
+  font-size: var(--fs-2);
   margin-block-end: var(--sp-1);
 }
 
-.step-n {
+.step__num {
   font-family: var(--body);
   font-size: var(--fs-0);
   font-weight: 500;
   letter-spacing: .16em;
   color: var(--sky-ink);
+}
+
+.step--invalid .step__legend {
+  color: var(--sky-ink);
+}
+
+/* .field .input, а не просто .input: «свой вариант» не трясётся — он необязателен. */
+.step--invalid .opts,
+.step--invalid .field .input {
+  animation: bump .35s var(--ease-soft);
+}
+
+.step--invalid .field .input:invalid {
+  border-color: var(--sky-deep);
+}
+
+@keyframes bump {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  30% {
+    transform: translateX(-5px);
+  }
+
+  70% {
+    transform: translateX(4px);
+  }
 }
 
 .q {
@@ -599,13 +820,14 @@ body>canvas {
   margin-block-start: var(--sp-1);
 }
 
-.q-note {
-  font-size: var(--fs-0);
+.q__mark {
+  font-weight: 300;
   color: var(--muted);
 }
 
-.opt-mark {
-  font-weight: 300;
+/* Подсказка над группой вариантов: «Выбери один», «Можно несколько». */
+.hint {
+  font-size: var(--fs-0);
   color: var(--muted);
 }
 
@@ -617,9 +839,7 @@ body>canvas {
 
 /* у полей ввода рамка — единственный признак контрола, поэтому она контрастнее
    декоративных линий. У .opt контрол опознаётся по нативному радио, там хватает волоска. */
-.field input,
-.field textarea,
-.own-input {
+.input {
   width: 100%;
   padding: var(--sp-1) var(--sp-2);
   border: 1px solid var(--line-ui);
@@ -632,19 +852,19 @@ body>canvas {
   transition: border-color .25s, background .25s;
 }
 
-.field input::placeholder,
-.field textarea::placeholder,
-.own-input::placeholder {
+.input::placeholder {
   color: var(--muted);
   font-weight: 300;
 }
 
-.field input:focus,
-.field textarea:focus,
-.own-input:focus {
+.input:focus {
   outline: none;
   border-color: var(--sky-deep);
   background: #fff;
+}
+
+.input--own {
+  margin-block-start: var(--sp-0);
 }
 
 .opts {
@@ -676,7 +896,7 @@ body>canvas {
   background: #fff;
 }
 
-.opt input {
+.opt__input {
   accent-color: var(--sky-deep);
   width: 16px;
   height: 16px;
@@ -684,117 +904,82 @@ body>canvas {
   flex: 0 0 auto;
 }
 
-.opt:has(input:checked) {
+.opt:has(.opt__input:checked) {
   border-color: var(--sky-deep);
   background: #fff;
 }
 
-.own-input {
-  margin-block-start: var(--sp-0);
+/* Подтверждение отправки — состояние страницы брифа, без отдельного URL. */
+.done {
+  display: grid;
+  padding-block: var(--sp-7) var(--sp-section);
 }
 
-.step.is-bad legend {
-  color: var(--sky-ink);
+.done__text {
+  margin-block-start: var(--sp-2);
 }
 
-.step.is-bad .opts,
-.step.is-bad .field input,
-.step.is-bad .field textarea {
-  animation: bump .35s var(--ease-soft);
-}
-
-.step.is-bad .field input:invalid,
-.step.is-bad .field textarea:invalid {
-  border-color: var(--sky-deep);
-}
-
-@keyframes bump {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  30% {
-    transform: translateX(-5px);
-  }
-
-  70% {
-    transform: translateX(4px);
-  }
-}
-
-.form-foot {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-  align-items: center;
-}
-
-.form-error {
-  color: var(--sky-ink);
-  font-size: var(--fs-0);
-}
-
-.form-note {
-  font-size: var(--fs-0);
-  color: var(--muted);
-  max-width: 46ch;
-  font-weight: 300;
-}
-
-.done-actions {
+.done__actions {
+  margin-block-start: var(--sp-3);
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-1);
 }
 
 /* ═══════════════ ВОПРОСЫ (аккордеон) ═══════════════ */
-.qa {
+.faq__item {
   break-inside: avoid;
   border-bottom: 1px solid var(--line);
   padding-block: var(--sp-2);
 }
 
-.qa summary {
+.faq__item:last-child {
+  border-bottom: none;
+}
+
+.faq__q {
   cursor: pointer;
   list-style: none;
-  font-size: var(--fs-2);
-  font-weight: 500;
+  /* Ранг тот же, что у .subhead (18/500), но строка — корпусная, а не 1.3:
+     summary это кликабельная цель, при 1.3 её высота падает до 23px,
+     ниже минимума 24px по WCAG 2.5.8 (замерено). */
+  font: 500 var(--fs-1)/var(--lh-body) var(--body);
   display: flex;
   gap: var(--sp-1);
   justify-content: space-between;
   transition: color .25s;
 }
 
-.qa summary::-webkit-details-marker {
+.faq__q::-webkit-details-marker {
   display: none;
 }
 
-.qa summary::after {
+.faq__q::after {
   content: "+";
   color: var(--sky-ink);
   font-family: var(--display);
-  font-size: var(--fs-2);
+  font-size: var(--fs-1);
   line-height: 1.2;
   flex: 0 0 auto;
 }
 
-.qa[open] summary::after {
-  content: "–";
-}
-
-.qa summary:hover {
+.faq__q:hover {
   color: var(--sky-ink);
 }
 
-.qa p {
+/* [open] — нативное состояние <details>, дублировать его классом нечем: его ставит браузер. */
+.faq__item[open] .faq__q::after {
+  content: "–";
+}
+
+.faq__a {
   margin-block-start: var(--sp-1);
   color: var(--muted);
   font-weight: 300;
   /* размер — от body: 15px давал 6% разрыв с вопросом на мобильных */
 }
 
+/* ═══════════════ ПРИМЕРЫ РАБОТ ═══════════════ */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -816,14 +1001,138 @@ body>canvas {
   border-color: var(--sky);
 }
 
-.filter.is-on {
+/* :hover перечислен явно — иначе он весит больше одиночного модификатора и перебивал бы его. */
+.filter--active,
+.filter--active:hover {
   border-color: var(--ink);
   background: var(--ink);
   color: #fff;
 }
 
+.cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--sp-3);
+}
+
+.case {
+  display: flex;
+  flex-direction: column;
+}
+
+.case__img {
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, var(--logo-2), var(--logo));
+  margin-block-end: var(--sp-1);
+}
+
+.case__title {
+  margin-block-end: var(--sp-0);
+}
+
+.case__text {
+  color: var(--muted);
+  font-size: var(--fs-1);
+  margin-block-end: var(--sp-1);
+  flex: 1;
+}
+
+.case__tag {
+  font-size: var(--fs-0);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--sky-ink);
+}
+
+/* ═══════════════ ОБО МНЕ ═══════════════ */
+.portrait {
+  width: clamp(140px, 22vw, 200px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(160deg, var(--logo-2), var(--logo));
+  border: 1px solid var(--line);
+}
+
+/* Шесть фаз — нумерованный список: номер фазы рисуем сами, маркер списка гасим. */
+.phases {
+  display: grid;
+  gap: var(--sp-3);
+  list-style: none;
+}
+
+.phase {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-2);
+  align-items: start;
+}
+
+.phase__num {
+  font-family: var(--display);
+  font-size: var(--fs-3);
+  line-height: .9;
+  color: var(--sky-ink);
+}
+
+/* Текстовая часть фазы: интервалы между заголовком и обоими абзацами одинаковые,
+   поэтому это gap, а не два встречных маржина. */
+.phase__body {
+  display: grid;
+  gap: var(--sp-0);
+}
+
+.phase__text {
+  color: var(--muted);
+}
+
+.phase__got {
+  color: var(--ink);
+  font-size: var(--fs-0);
+  /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
+}
+
+.phase__got-name {
+  font-weight: 500;
+}
+
+.phase__tag {
+  font-size: var(--fs-0);
+  /* абсолютный, не em: от заклампленного родителя .62em давало 10.5px на мобильных */
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* Какие бывают сайты.
+   grid — чтобы маржин первого dt не протекал наружу сквозь dl (раньше протекал
+   и съедал собственный отступ списка). */
+.types {
+  display: grid;
+}
+
+.types__desc {
+  margin-block-start: var(--sp-0);
+  color: var(--muted);
+}
+
+/* Через dd + dt, а не dt + правило-исключение для первого: интервал нужен
+   только между парами, у первого dt предыдущего dd нет. */
+.types__desc+.types__term {
+  margin-block-start: var(--sp-3);
+}
+
+.types__link {
+  white-space: nowrap;
+}
+
 /* ═══════════════════════════════════════════════
-   ПЕРЕХОДЫ ЭКРАНОВ ПОГРУЖЕНИЯ: нырок вперёд / шаг назад
+   НЫРОК МЕЖДУ СТРАНИЦАМИ
+   Анимируем ТОЛЬКО блок контента (.page) — дым и курсорный след не участвуют
+   и остаются живыми. Фиксацию во вьюпорте на время анимации ставит nav.js (inline).
    ═══════════════════════════════════════════════ */
 @keyframes dive-out {
   from {
@@ -853,21 +1162,47 @@ body>canvas {
   }
 }
 
-/* ═══════════════ адаптив ═══════════════ */
+.page--out {
+  animation: dive-out var(--t-dive) var(--ease-dive) both;
+}
+
+.page--in {
+  animation: dive-in var(--t-dive) var(--ease-dive) both;
+}
+
+/* ═══════════════════════════════════════════════
+   АДАПТИВ
+   Без :where() спор решает порядок строк, поэтому все медиаблоки — в конце файла
+   и идут от широкого к узкому. Крупные уровни сдвигаются на ступень вниз целиком,
+   а не интерполируются: clamp() держит шаг 1.25 только на концах диапазона
+   (при 768px давал 46.08 и 30.72 — соотношение 1.5, а не 1.25).
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+
+  /* h1 уходит на ступень: 52 → 36. Заголовок раздела (26) и логотип (26)
+     остаются — на пяти ступенях им некуда опускаться, следующая ступень
+     вниз это уже кегль корпуса. */
+  .display--page {
+    font-size: var(--fs-3);
+  }
+
+  .phase__num {
+    font-size: var(--fs-2);
+  }
+}
+
 @media (max-width: 720px) {
-  .logo {
+  .start__logo {
     font-size: 16.6vw;
     letter-spacing: .02em;
   }
 
-  .start-actions {
+  .start__actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  /* Пять пунктов меню в строку с логотипом не помещаются — кладём их под него.
-     Базовое правило .site-head лежит ниже по файлу, но оно в :where() —
-     поэтому здесь выигрывает вес, а не порядок строк. */
+  /* Пять пунктов меню в строку с логотипом не помещаются — кладём их под него. */
   .site-head {
     flex-direction: column;
     align-items: flex-start;
@@ -875,8 +1210,16 @@ body>canvas {
   }
 }
 
+/* Подпись под вордмарком набрана разрядкой .34em: на 18px строка выходит ~298px
+   и на узком экране рвётся на две. До 375px включительно держим ступень ниже. */
+@media (max-width: 375px) {
+  .start__tagline {
+    font-size: var(--fs-0);
+  }
+}
+
 @media (max-height: 560px) and (orientation: landscape) {
-  .logo {
+  .start__logo {
     font-size: 13vw;
   }
 }
@@ -884,365 +1227,14 @@ body>canvas {
 /* ═══════════════ reduced motion ═══════════════ */
 @media (prefers-reduced-motion: reduce) {
 
-  .screen--start.is-active .logo,
-  .screen--start.is-active .logo-sub,
-  .screen--start.is-active .start-actions,
-  .screen--start.is-active .start-doors {
+  .start--first .start__logo,
+  .start--first .start__tagline,
+  .start--first .start__actions,
+  .start--first .start__doors {
     animation: none;
   }
 
   * {
     scroll-behavior: auto !important;
-  }
-}
-
-/* ═══════════════ нырок между страницами ═══════════════ */
-/* Анимируем ТОЛЬКО блок контента (#page) — дым и курсорный след не участвуют и остаются живыми.
-   Фиксацию во вьюпорте на время анимации ставит nav.js (inline), здесь — сам нырок. */
-#page.is-out {
-  animation: dive-out var(--t-dive) var(--ease-dive) both;
-}
-
-#page.is-in {
-  animation: dive-in var(--t-dive) var(--ease-dive) both;
-}
-
-/* ═══════════════════════════════════════════════
-   КОНТЕНТ-СТРАНИЦЫ (обо мне, примеры работ, кейсы, блог)
-   Обёртка #page с классом .doc. Скролл-поток задаёт html (см. верх файла).
-   Общие .btn/.display/.lede/.filter — из immersion выше (приоритет style.css).
-   Здесь — только структура и то, чего в immersion нет.
-   ═══════════════════════════════════════════════ */
-
-/* Контент поднимаем над дымом (.smoke z-index -1, курсорный canvas 0), иначе секции уходят под них. */
-.doc>header,
-.doc>main,
-.doc>section,
-.doc>footer {
-  position: relative;
-  z-index: 1;
-}
-
-/* :not(.back) — «На главную» держит свой приглушённый тон из .back, а не акцентный цвет ссылок в тексте. */
-.prose a:not(.back) {
-  color: var(--sky-ink);
-}
-
-/* Шапка. Та же колонка, что у контента: логотип, h1 и подвал стоят на одной
-   вертикали (было три разные оси — 64 / 344 / 280 на 1280px). */
-:where(.site-head) {
-  max-width: calc(var(--measure) + 2 * var(--pad));
-  margin-inline: auto;
-  padding-inline: var(--pad);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-1);
-  padding-block: var(--sp-2);
-  border-bottom: 1px solid var(--line);
-}
-
-:where(.site-logo) {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: var(--fs-3);
-  letter-spacing: .06em;
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.site-nav {
-  display: flex;
-  flex-wrap: wrap;
-  /* без justify-content: на десктопе меню и так прижато справа (space-between),
-     а на мобильных оно встаёт по левому краю — на одну ось с логотипом. */
-  gap: var(--sp-2);
-}
-
-.site-nav a {
-  color: var(--muted);
-  text-decoration: none;
-  /* см. .door: 14px давало высоту 22.4px, ниже минимума WCAG 2.5.8 */
-  font-size: var(--fs-1);
-  letter-spacing: .02em;
-  transition: color 160ms ease;
-}
-
-.site-nav a:hover,
-.site-nav a[aria-current="page"] {
-  color: var(--ink);
-}
-
-/* Заголовки контент-страниц (размеры; базовый .display и .display em — из immersion) */
-:where(.doc h1.display) {
-  font-size: var(--fs-6);
-}
-
-:where(.doc h2.display) {
-  font-size: var(--fs-4);
-}
-
-.doc .display em {
-  color: var(--sky-ink);
-}
-
-.prose {
-  padding-block: var(--sp-section);
-}
-
-.prose ul {
-  padding-inline-start: var(--sp-2);
-}
-
-.prose li+li {
-  margin-block-start: var(--sp-0);
-}
-
-/* Корпусный абзац раздела — второстепенный тон, --ink остаётся за заголовками.
-   Ставится явно: селектор по тегу цеплял бы и абзацы внутри карточек. Ряд: .lede → .copy. */
-.copy {
-  color: var(--muted);
-  font-weight: 300;
-}
-
-/* Полоса CTA */
-.cta {
-  display: flex;
-  text-align: center;
-  padding-block: var(--sp-section);
-  border-top: 1px solid var(--line);
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Портрет (обо мне) */
-.portrait {
-  width: clamp(140px, 22vw, 200px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  object-fit: cover;
-  background: linear-gradient(160deg, var(--logo-2), var(--logo));
-  border: 1px solid var(--line);
-}
-
-/* Подвал: перелинковка + соцсети */
-/* Подвал — та же колонка, что шапка и контент (см. .site-head). */
-.site-foot {
-  max-width: calc(var(--measure) + 2 * var(--pad));
-  margin-inline: auto;
-  padding-inline: var(--pad);
-  border-top: 1px solid var(--line);
-  padding-block: var(--sp-flow) var(--sp-3);
-  color: var(--muted);
-  font-size: var(--fs-0);
-}
-
-.foot-cols {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--sp-3);
-}
-
-.foot-cols h3 {
-  font: 500 var(--fs-0)/1 var(--body);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  margin-block-end: var(--sp-1);
-}
-
-.foot-cols a {
-  color: var(--muted);
-  text-decoration: none;
-  display: block;
-  /* 22.4 строки + 2×8 = 38.4px по высоте — выше минимума 2.5.8, ближе к --tap */
-  padding-block: var(--sp-0);
-}
-
-.foot-cols a:hover {
-  color: var(--ink);
-}
-
-.foot-note {
-  margin-block-start: var(--sp-3);
-  padding-block-start: var(--sp-2);
-  border-top: 1px solid var(--line);
-  font-size: var(--fs-0);
-}
-
-/* Примеры работ: сетка кейсов (фильтр .filters/.filter — из immersion выше) */
-.cases {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--sp-3);
-}
-
-.case {
-  display: flex;
-  flex-direction: column;
-}
-
-.case-img {
-  aspect-ratio: 4 / 3;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: linear-gradient(150deg, var(--logo-2), var(--logo));
-  margin-block-end: var(--sp-1);
-}
-
-.case-t {
-  font: 500 var(--fs-2)/1.3 var(--body);
-  margin-block-end: var(--sp-0);
-}
-
-.case-b {
-  color: var(--muted);
-  font-size: var(--fs-1);
-  margin-block-end: var(--sp-1);
-  flex: 1;
-}
-
-.case-tag {
-  font-size: var(--fs-0);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--sky-ink);
-}
-
-.cases-empty {
-  color: var(--muted);
-}
-
-/* Обо мне: шесть фаз */
-.phases-h {
-  font: 500 var(--fs-2)/1.3 var(--body);
-  letter-spacing: .02em;
-}
-
-.phases {
-  display: grid;
-  gap: var(--sp-3);
-}
-
-.ph {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--sp-2);
-  align-items: start;
-}
-
-:where(.ph-n) {
-  font-family: var(--display);
-  font-size: var(--fs-5);
-  line-height: .9;
-  color: var(--sky-ink);
-}
-
-/* Текстовая часть фазы: интервалы между заголовком и обоими абзацами одинаковые,
-   поэтому это gap, а не два встречных маржина. */
-.ph> :last-child {
-  display: grid;
-  gap: var(--sp-0);
-}
-
-.ph h4 {
-  font: 500 var(--fs-2)/1.3 var(--body);
-}
-
-.ph p {
-  color: var(--muted);
-}
-
-.ph .got {
-  color: var(--ink);
-  font-size: var(--fs-0);
-  /* 15px сливался с абзацем выше: на 375px тот считается в 15.9px */
-}
-
-.ph .got b {
-  font-weight: 500;
-}
-
-.phase-tag {
-  font-size: var(--fs-0);
-  /* абсолютный, не em: от заклампленного родителя .62em давало 10.5px на мобильных */
-  color: var(--muted);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  vertical-align: middle;
-}
-
-/* Обо мне: какие бывают сайты.
-   grid — чтобы маржин первого dt не протекал наружу сквозь dl (раньше протекал
-   и съедал собственный отступ списка). */
-.types {
-  display: grid;
-}
-
-.types dt {
-  font: 500 var(--fs-2)/1.3 var(--body);
-}
-
-/* Через dd + dt, а не dt + правило-исключение для первого: интервал нужен
-   только между парами, у первого dt предыдущего dd нет. */
-.types dd+dt {
-  margin-block-start: var(--sp-3);
-}
-
-.types dd {
-  margin-block-start: var(--sp-0);
-  color: var(--muted);
-}
-
-.types dd a {
-  white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════════════
-   Шкала на узких экранах
-   Крупные уровни сдвигаются на ступень вниз целиком, а не интерполируются.
-   clamp() держит шаг 1.25 только на концах диапазона: между ними размер уходит
-   с шага (при 768px давал 46.08 и 30.72 — соотношение 1.5, а не 1.25).
-   Базовые правила (.display, .doc h1.display, .ph-n, .site-logo) обёрнуты
-   в :where() — их вес 0, поэтому эти переопределения выигрывают по
-   специфичности и от места блока в файле больше не зависят.
-   ═══════════════════════════════════════════════ */
-@media (max-width: 900px) {
-  .display {
-    font-size: var(--fs-6);
-  }
-
-  .ph-n {
-    font-size: var(--fs-4);
-  }
-
-  .doc h1.display {
-    font-size: var(--fs-5);
-  }
-
-  .doc h2.display {
-    font-size: var(--fs-3);
-  }
-
-  .site-logo {
-    font-size: var(--fs-2);
-  }
-}
-
-@media (max-width: 560px) {
-  .display {
-    font-size: var(--fs-5);
-  }
-
-  .step legend {
-    font-size: var(--fs-3);
-  }
-}
-
-/* Подпись под вордмарком набрана разрядкой .34em: на 17.5px строка выходит 290px
-   и на узком экране рвётся на две. До 375px включительно держим ступень ниже. */
-@media (max-width: 375px) {
-  .logo-sub {
-    font-size: var(--fs-0);
   }
 }
